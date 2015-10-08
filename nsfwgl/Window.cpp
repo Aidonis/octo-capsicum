@@ -2,47 +2,85 @@
 
 void nsfw::Window::init(unsigned width, unsigned height)
 {
-	TODO_D("Should create and set an active windowing context. ONLY GLFW! No GL!");
+	if (glfwInit() == false) {
+		return;
+	}
+	window = glfwCreateWindow(width, height, "nsfwGL", nullptr, nullptr);
+
+	if (window == nullptr) {
+		glfwTerminate();
+	}
+	
+	glfwMakeContextCurrent(window);
+
+	if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
+		glfwDestroyWindow(window);
+		glfwTerminate();
+		return;
+	}
+
+	//TODO_D("Should create and set an active windowing context. ONLY GLFW! No GL!");
 }
 
 void nsfw::Window::step()
 {
-	TODO_D("GLFW poll events and swap buffers is all that should really be here! No GL!");
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+
+	//TODO_D("GLFW poll events and swap buffers is all that should really be here! No GL!");
 }
 
 void nsfw::Window::term()
 {
-	TODO();
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }
 
 float nsfw::Window::getTime() const
 {
-	TODO();
-	return 0.0f;
+	//Look into tick
+	//TODO();
+	return glfwGetTime();
 }
 
 bool nsfw::Window::getKey(unsigned k) const
 {
-	TODO();
-	return false;
+	//TODO();
+	if(glfwGetKey(window, k) == GLFW_PRESS){
+		return true;
+	}
+	else{
+		return false;
+	}
+	
 }
 
 bool nsfw::Window::getShouldClose() const
 {
-	TODO();
-	return true;
+	if (glfwWindowShouldClose(window) || getKey(256)) {
+		return true;
+		
+	}
+
+	int i = 1;
+	if (i == 1){
+		return true;
+	}
+	//TODO();
+	return false;
+	
 }
 
 unsigned nsfw::Window::getWidth() const
 {
-	TODO();
-	return 0;
+	//TODO();
+	return width;
 }
 
 unsigned nsfw::Window::getHeight() const
 {
-	TODO();
-	return 0;
+	//TODO();
+	return height;
 }
 
 glm::mat4 nsfw::Window::getTexelAdjustmentMatrix() const
