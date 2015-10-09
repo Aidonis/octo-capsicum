@@ -44,7 +44,7 @@ void DeferredApplication::onInit()
 	a.loadShader("CompPass", "/path/to/cpass/vertex", "/path/to/cpass/fragment");
 
 	// Load any other textures and geometry we want to use
-	a.loadFBX("Soulspear", "/path/to/souuuulspppeeeeaaar");
+	a.loadFBX("Soulspear", "../rsc/models/cube.fbx");
 }
 
 void DeferredApplication::onPlay()

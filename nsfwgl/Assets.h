@@ -79,7 +79,7 @@ namespace nsfw
 	{
 	private:
 		// Hashing functor object for accepting pair<enum,string> as an index.
-		struct Hash { size_t operator()(AssetKey k) const { return std::hash<std::string>()(k.second) + (unsigned)k.first; } };
+		struct Hash { size_t operator()(AssetKey k) const { return  std::hash<std::string>()(k.second) + (unsigned)k.first; } };
 		
 		// Store all of our keys in one place!
 		std::unordered_map<AssetKey, GL_HANDLE, Hash> handles;
@@ -93,14 +93,14 @@ namespace nsfw
 		static Assets &instance() { static Assets a; return a; }
 
 		//normal get handle function
-		GL_HANDLE get(ASSET::GL_HANDLE_TYPE t, const char *name)	const { return getVERIFIED(AssetKey(t,name)); }
+		GL_HANDLE get(ASSET::GL_HANDLE_TYPE t, const char *name) const { return getVERIFIED(AssetKey(t,name)); }
 
 		//templated Get,for sexiness
 		template<ASSET::GL_HANDLE_TYPE t>
-		GL_HANDLE get(const char *name)			const { return getVERIFIED(AssetKey(t,name)); }
+		GL_HANDLE get(const char *name)	const { return getVERIFIED(AssetKey(t,name)); }
 
 		// Get via the Asset reference, sexier
-		GL_HANDLE get(const AssetKey &key)				const { return getVERIFIED(key); }
+		GL_HANDLE get(const AssetKey &key) const { return getVERIFIED(key); }
 
 		//Conveniently fetch handle using an Asset object, for even more sexy
         GL_HANDLE operator[](const AssetKey &key) const { return getVERIFIED(key); }

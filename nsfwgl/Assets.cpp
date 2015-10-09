@@ -41,6 +41,9 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE ha
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize,  const unsigned * tris, unsigned tsize)
 {
+	//From CreateRenderObject
+	//assign handles
+	//handles[AssetKey(GL_HANDLE_TYPE::VBO, name)] = vbo
 	ASSET_LOG(GL_HANDLE_TYPE::VBO);
 	ASSET_LOG(GL_HANDLE_TYPE::IBO);
 	ASSET_LOG(GL_HANDLE_TYPE::VAO);
@@ -80,6 +83,31 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
 	//name/meshName
 	//name/textureName
+	//WIP
+	FBXFile file;
+	file.load(path, FBXFile::UNITS_METER, false, false, false);
+
+	FBXMeshNode* mesh = file.getMeshByIndex(0);
+
+	unsigned int vertSize, triSize;
+	Vertex* verts = new Vertex[vertSize = mesh->m_vertices.size()];
+	unsigned *tris = new unsigned[triSize = mesh->m_indices.size()];
+
+	//Load Vert Data
+	for (int i = 0; i < mesh->m_vertices.size(); i++){
+		verts[i] = { mesh->m_vertices[i].position, mesh->m_vertices[i].normal, mesh->m_vertices[i].tangent, mesh->m_vertices[i].texCoord1 };
+	}
+
+	//LoadTri Data
+	for (int i = 0; i, mesh->m_indices.size(); i++){
+		tris[i] = mesh->m_indices[i];
+	}
+
+	makeVAO(name, verts, vertSize, tris, triSize);
+
+	file.unload();
+
+
 	TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
 	return false;
 }
