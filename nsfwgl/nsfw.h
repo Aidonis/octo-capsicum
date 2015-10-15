@@ -6,6 +6,7 @@
 
 #include "gl_core_4_4.h"
 #include "glfw/glfw3.h"
+#include "stb/stb_image.h"
 #include "fbx/FBXFile.h"
 
 #define GLM_FORCE_PURE

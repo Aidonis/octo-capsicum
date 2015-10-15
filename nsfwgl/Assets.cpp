@@ -23,7 +23,7 @@ nsfw::GL_HANDLE nsfw::Assets::getVERIFIED(const AssetKey &key) const
 			return handles.at(key);
 }
 
-bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE handle)
+bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HANDLE handle)
 {
 	AssetKey key(t, name);
 #ifdef _DEBUG
@@ -38,17 +38,73 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE ha
 	return true;
 }
 
+unsigned nsfw::Assets::LoadShader(unsigned shaderType, const char* path){
+	std::string shaderCode;
+	//openfile
+	std::ifstream stream(path);
+
+	if(stream.is_open()){
+		std::string line = "";
+		while(std::getline(stream, line)){
+			shaderCode += "\n" + line;
+		}
+		stream.close();
+	}
+
+	//convert to cstring char const* 
+
+}
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize,  const unsigned * tris, unsigned tsize)
 {
 	//From CreateRenderObject
 	//assign handles
 	//handles[AssetKey(GL_HANDLE_TYPE::VBO, name)] = vbo
+	//SetInternal
 	ASSET_LOG(GL_HANDLE_TYPE::VBO);
 	ASSET_LOG(GL_HANDLE_TYPE::IBO);
 	ASSET_LOG(GL_HANDLE_TYPE::VAO);
 	ASSET_LOG(GL_HANDLE_TYPE::SIZE);
-	TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
+	
+	GLuint vao, ibo, vbo;
+
+	//Generate Array + Buffers
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ibo);
+
+	setINTERNAL(VAO, name, vao);
+	setINTERNAL(IBO, name, ibo);
+	setINTERNAL(VBO, name, vbo);
+	setINTERNAL(GL_HANDLE_TYPE::SIZE, name, tsize);
+
+	glBindVertexArray(vao);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vsize, verts, GL_STATIC_DRAW);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ARRAY_BUFFER, tsize, tris, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0); //position
+	glEnableVertexAttribArray(1); //normal
+	glEnableVertexAttribArray(2); //tangent
+	glEnableVertexAttribArray(3); //UV Coord
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 1));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 2));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 3));
+
+	//Unbind
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+
+
+	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	return false;
 }
 
@@ -62,20 +118,51 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
-	TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
+	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
+	GLuint tex;
+	
+	glGenTextures(1, &tex);
+	setINTERNAL(TEXTURE, name, tex);
+	
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	return false;
 }
 
 bool nsfw::Assets::loadTexture(const char * name, const char * path)
 {
-	TODO_D("This should load a texture from a file, using makeTexture to perform the allocation.\nUse STBI, and make sure you switch the format STBI provides to match what openGL needs!");
-	return false;
+	//TODO_D("This should load a texture from a file, using makeTexture to perform the allocation.\nUse STBI, and make sure you switch the format STBI provides to match what openGL needs!");
+	int imageWidth = 0;
+	int imageHeight = 0;
+	int imageFormat = 0;
+	const char* data = (const char*)stbi_load(path, &imageWidth, &imageHeight, &imageFormat, STBI_default);
+
+	switch(imageFormat){
+	case 1: imageFormat = GL_RED; break;
+	case 2: imageFormat = GL_RG; break;
+	case 3: imageFormat = GL_RGB; break;
+	case 4: imageFormat = GL_RGBA; break;
+	}
+	if( data == nullptr){
+		std::cout << "error loading texture.\n" << stbi_failure_reason();
+		return false;
+	}
+
+	makeTexture(name, imageWidth, imageHeight, imageFormat, data);
+	stbi_image_free((void*)data);
+
+	return true;
 }
 
 bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
 {
 	ASSET_LOG(GL_HANDLE_TYPE::SHADER);
 	TODO_D("Load shader from a file.");
+
 	return false;
 }
 
@@ -99,7 +186,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	}
 
 	//LoadTri Data
-	for (int i = 0; i, mesh->m_indices.size(); i++){
+	for (int i = 0; i < mesh->m_indices.size(); i++){
 		tris[i] = mesh->m_indices[i];
 	}
 
@@ -108,7 +195,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	file.unload();
 
 
-	TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
+	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
 	return false;
 }
 
