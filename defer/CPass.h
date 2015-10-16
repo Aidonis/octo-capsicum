@@ -11,13 +11,19 @@ class CPass : public nsfw::RenderPass
 public:
 											
 	CPass(const char *shaderName, const char *fboName) 
-						  : RenderPass(shaderName, fboName), albedo("GPassAlbedo"), position("GPassPosition"), // NAMES ARE FROM ASSET LIBRARY!
-											    normal("GPassNormal"),depth("GPassDepth"), light("LPassColor")
-												 {}
+	: RenderPass(shaderName, fboName), albedo("GPassAlbedo"), position("GPassPosition"), // NAMES ARE FROM ASSET LIBRARY!
+	normal("GPassNormal"),depth("GPassDepth"), light("LPassColor"){}
 
 
-	void prep() { TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc..."); }
-	void post() { TODO_D("Unset any gl settings"); }
+	void prep(){
+		TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
+		//
+
+	}
+	void post(){
+		TODO_D("Unset any gl settings");
+		//
+	}
 
 
 	void draw()
@@ -33,6 +39,8 @@ public:
 
 		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
 		unsigned quadNumtris   = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
+
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		TODO_D("GL BindVAO/DrawElements with quad size and vao");
 	}

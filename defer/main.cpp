@@ -30,21 +30,21 @@ void DeferredApplication::onInit()
 
 	// Setup FBOs
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
-	const unsigned gpassDepths[] = { 0,0,0,0 }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
+	const unsigned gpassDepths[] = { GL_RGB, GL_RGB, GL_RGB, GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
 	const char *lpassTextureNames[] = { "LPassColor" };
-	const unsigned lpassDepths[] = { 0 }; // GL_RGB8
+	const unsigned lpassDepths[] = { GL_RGB }; // GL_RGB8
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
 
 	// Load Shaders
-	a.loadShader("GeometryPassPhong", "/path/to/gpass/Phong/vertex", "/path/to/gpass/Phong/fragment");
-	a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
+	a.loadShader("GeometryPassPhong", "../rsc/shaders/vertexShader.glsl", "../rsc/shaders/fragmentShader.glsl");
+	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	a.loadShader("CompPass", "/path/to/cpass/vertex", "/path/to/cpass/fragment");
+	//a.loadShader("CompPass", "/path/to/cpass/vertex", "/path/to/cpass/fragment");
 
 	// Load any other textures and geometry we want to use
-	a.loadFBX("Soulspear", "../rsc/models/cube.fbx");
+	a.loadFBX("Soulspear", "../rsc/models/soulspear/soulspear.fbx");
 }
 
 void DeferredApplication::onPlay()
@@ -61,9 +61,9 @@ void DeferredApplication::onPlay()
 
 	m_soulspear->mesh	   = "Soulspear";
 	m_soulspear->tris	   = "Soulspear";
-	m_soulspear->diffuse   = "SoulspearDiffuse";	// loadFBX will need to name every handle it creates,
-	m_soulspear->normal    = "SoulspearNormal";		// These handle names may not be what your loadFBX sets 
-	m_soulspear->specular  = "SoulspearSpecular";	// them as! (Assets will report what the key names are though)
+	m_soulspear->diffuse   = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	m_soulspear->normal    = "soulspear_normal.tga";		// These handle names may not be what your loadFBX sets 
+	m_soulspear->specular  = "soulspear_specular.tga";	// them as! (Assets will report what the key names are though)
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 

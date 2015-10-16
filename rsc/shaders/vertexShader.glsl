@@ -13,8 +13,9 @@ out vec3 vBiTangent;
 
 out vec2 vTexCoord;
 
-uniform mat4 ProjectionView;
-
+uniform mat4 Projection;
+uniform mat4 View;
+uniform mat4 Model;
 
 	void main(){
 		vNormal     = Normal.xyz;
@@ -23,5 +24,5 @@ uniform mat4 ProjectionView;
 
 		vTexCoord   = TexCoord;
 		vPosition   = Position;
-		gl_Position = ProjectionView * Position;
+		gl_Position = Projection * View * Model * Position;
 	}

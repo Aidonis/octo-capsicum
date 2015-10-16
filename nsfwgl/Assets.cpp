@@ -38,7 +38,7 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HAN
 	return true;
 }
 
-unsigned nsfw::Assets::LoadShader(unsigned shaderType, const char* path){
+unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
 	std::string shaderCode;
 	//openfile
 	std::ifstream stream(path);
@@ -51,7 +51,42 @@ unsigned nsfw::Assets::LoadShader(unsigned shaderType, const char* path){
 		stream.close();
 	}
 
-	//convert to cstring char const* 
+	//convert to cstring 
+	const char* shaderSourcePointer = shaderCode.c_str();
+
+	//Create ID
+	unsigned int shader = glCreateShader(shaderType);
+
+	//Load Source code
+	glShaderSource(shader, 1, &shaderSourcePointer, NULL);
+
+	//compile shader
+	glCompileShader(shader);
+
+	//error check
+	int status;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE){
+		int infoLogLength;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		char* infoLog = new char[infoLogLength + 1];
+		glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
+
+		const char* shaderName = NULL;
+		switch(shaderType){
+		case GL_VERTEX_SHADER:
+			shaderName = "vertex";
+			break;
+		case GL_FRAGMENT_SHADER:
+			shaderName = "fragment";
+			break;
+		}
+		fprintf(stderr, "Compile failure in %s shader:\n%s\n", shaderName, infoLog);
+		delete[] infoLog;
+	}
+	return shader;
+
 
 }
 
@@ -101,9 +136,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-
-
 	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	return false;
 }
@@ -111,8 +143,50 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned nTextures, const char * names[], const unsigned depths[])
 {
 	ASSET_LOG(GL_HANDLE_TYPE::FBO);
-	TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\nuse makeTexture.\nNOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
-	return false;
+	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\nuse makeTexture.\nNOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
+
+	GLuint fbo;
+	//Setup Framebuffer
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	
+
+	GLenum attachPoint = GL_COLOR_ATTACHMENT0;
+	std::vector<GLenum> drawBuffers;
+
+	for (int i = 0; i < nTextures; i++){
+		const unsigned depth = depths[i];
+		const char* a_name = names[i];
+		makeTexture(a_name, w, h, depth, nullptr);
+
+		GL_HANDLE tex = get(TEXTURE, a_name);
+
+		if(depth == GL_DEPTH_COMPONENT){
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+		}
+		else{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+			drawBuffers.push_back(attachPoint);
+			attachPoint++;
+		}
+	}
+
+	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
+
+
+	//Error checking
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if(status != GL_FRAMEBUFFER_COMPLETE){
+		bool incompleteAttachment = status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+		bool invalidEnum = status == GL_INVALID_ENUM;
+		bool invalidValue = status == GL_INVALID_VALUE;
+		printf("Framebuffer Error!\n");
+		return false;
+	}
+	setINTERNAL(FBO, name, fbo);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	return true;
 }
 
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
@@ -120,17 +194,26 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
-	
 	glGenTextures(1, &tex);
 	setINTERNAL(TEXTURE, name, tex);
-	
 	glBindTexture(GL_TEXTURE_2D, tex);
+	
+	GLenum a_depth = (depth == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : depth;
+
 	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
-	return false;
+	GLenum error = glGetError();
+	if ( error != GL_NO_ERROR){
+		bool invalidEnum = error == GL_INVALID_ENUM;
+		bool invalidValue = error == GL_INVALID_VALUE;
+		printf("error with texture.\n");
+		glBindTexture(GL_TEXTURE_2D, 0);
+		return false;
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return true;
 }
 
 bool nsfw::Assets::loadTexture(const char * name, const char * path)
@@ -161,16 +244,45 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
 {
 	ASSET_LOG(GL_HANDLE_TYPE::SHADER);
-	TODO_D("Load shader from a file.");
+	//TODO_D("Load shader from a file.");
 
-	return false;
+	unsigned int vertex = loadShaderFile(GL_VERTEX_SHADER, vpath);
+	if (vertex == 0 ){
+		return false;
+	}
+	unsigned int fragment = loadShaderFile(GL_FRAGMENT_SHADER, fpath);
+	if(fragment == 0 ){
+		return false;
+	}
+
+	int success = GL_FALSE;
+	GLuint shader = glCreateProgram();
+	glAttachShader(shader, vertex);
+	glAttachShader(shader, fragment);
+	glLinkProgram(shader);
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+	glGetProgramiv(shader, GL_LINK_STATUS, &success);
+	if(success == GL_FALSE){
+		int length = 0;
+		glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &length);
+		char* log = new char[length];
+		glGetProgramInfoLog(shader, length, 0, log);
+		std::cout << "Error linking shader program.\n" << log << std::endl;
+		delete[] log;
+		return false;
+	}
+
+	setINTERNAL(SHADER, name, shader);
+	return true;
 }
 
 bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
 	//name/meshName
 	//name/textureName
-	//WIP
+	//WIP Make able to load multiple meshes / beware mesh names
 	FBXFile file;
 	file.load(path, FBXFile::UNITS_METER, false, false, false);
 
@@ -202,12 +314,15 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 {
 	TODO_D("OBJ file-loading support needed.\nThis function should call makeVAO and loadTexture (if necessary), MAKE SURE TO TAKE THE OBJ DATA AND PROPERLY LINE IT UP WITH YOUR VERTEX ATTRIBUTES (or interleave the data into your vertex struct).\n");
+	//TODOSetup Tiny OBJ
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
 	return false;
 }
 
 void nsfw::Assets::init()
 {
-	TODO_D("Load up some default assets here if you want.");
+	//TODO_D("Load up some default assets here if you want.");
 	
 	setINTERNAL(FBO,"Screen",0);
 	

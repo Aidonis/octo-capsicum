@@ -90,11 +90,11 @@ namespace nsfw
 
 		bool setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HANDLE handle);
 
-		unsigned int LoadShader(unsigned int shaderType, const char* path);
+		unsigned int loadShaderFile(unsigned int shaderType, const char* path);
 	public:
 		// Singleton accessor
 		static Assets &instance() { static Assets a; return a; }
-
+		
 		//normal get handle function
 		GL_HANDLE get(ASSET::GL_HANDLE_TYPE t, const char *name) const { return getVERIFIED(AssetKey(t,name)); }
 
@@ -120,7 +120,7 @@ namespace nsfw
 
 		// should call makeTexture nTextures number of times
 		bool makeFBO(const char *name, unsigned w, unsigned h, unsigned nTextures, const char *names[], const unsigned depths[]);
-
+		
 		// should allocate space for a texture, but not necessarily set its data
 		bool makeTexture(const char *name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
 
