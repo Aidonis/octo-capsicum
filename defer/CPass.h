@@ -16,13 +16,22 @@ public:
 
 
 	void prep(){
-		TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
+		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.25f, 0.25f, 0.55f, 1);
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		glUseProgram(*shader);
+
 
 	}
 	void post(){
-		TODO_D("Unset any gl settings");
+		//TODO_D("Unset any gl settings");
 		//
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindVertexArray(0);
+		glUseProgram(0);
 	}
 
 
@@ -40,7 +49,8 @@ public:
 		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
 		unsigned quadNumtris   = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glBindVertexArray(quadVAOHandle);
+		glDrawElements(GL_TRIANGLES, quadNumtris, GL_UNSIGNED_INT, 0);
 
 		TODO_D("GL BindVAO/DrawElements with quad size and vao");
 	}

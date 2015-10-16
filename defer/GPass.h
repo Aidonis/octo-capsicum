@@ -15,7 +15,8 @@ public:
 		//
 		glEnable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		glClearColor(0.25f, 0.25f, 0.25f, 1);	
+		glClearColor(0.55f, 0.25f, 0.25f, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, 800, 600);
 		glUseProgram(*shader);
 	}
@@ -24,6 +25,7 @@ public:
 		//
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindVertexArray(0);
 		glUseProgram(0);
 	}
 
@@ -31,7 +33,7 @@ public:
 
 	void draw(const Camera &c, const Geometry &g)	
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 
 		setUniform("Projection",	nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
 		setUniform("View",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
@@ -49,9 +51,8 @@ public:
         *g.tris;*/
 
 		glBindVertexArray(*g.mesh);
+		unsigned ind_count = nsfw::Assets::instance().get(g.tris);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-
 		//TODO_D("bindVAO and Draw Elements!");
 	}
 };

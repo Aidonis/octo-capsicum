@@ -41,7 +41,7 @@ void DeferredApplication::onInit()
 	a.loadShader("GeometryPassPhong", "../rsc/shaders/vertexShader.glsl", "../rsc/shaders/fragmentShader.glsl");
 	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	//a.loadShader("CompPass", "/path/to/cpass/vertex", "/path/to/cpass/fragment");
+	a.loadShader("CompPass", "../rsc/shaders/cpassVertShader.glsl", "../rsc/shaders/cpassFragShader.glsl");
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "../rsc/models/soulspear/soulspear.fbx");
