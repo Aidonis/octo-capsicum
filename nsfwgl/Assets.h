@@ -108,6 +108,7 @@ namespace nsfw
 		//Conveniently fetch handle using an Asset object, for even more sexy
         GL_HANDLE operator[](const AssetKey &key) const { return getVERIFIED(key); }
 
+		// @esme: what do it do
         const void *getUNIFORM(const AssetKey &key) { return handles.find(key)._Ptr; }
 
 

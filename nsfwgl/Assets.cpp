@@ -285,6 +285,12 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	//WIP Make able to load multiple meshes / beware mesh names
 	FBXFile file;
 	file.load(path, FBXFile::UNITS_METER, false, false, false);
+	//file.initialiseOpenGLTextures();
+
+	//for (int i = 0; i < file.getTextureCount(); ++i)
+	//{
+	//	file.getTextureByIndex(i)->handle
+	//}
 
 	FBXMeshNode* mesh = file.getMeshByIndex(0);
 
@@ -301,6 +307,15 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	for (int i = 0; i < mesh->m_indices.size(); i++){
 		tris[i] = mesh->m_indices[i];
 	}
+
+	//load textures
+	for (int i = 0; i < file.getTextureCount(); i++)
+	{
+		FBXTexture* tex = file.getTextureByIndex(i);
+		loadTexture(tex->name.c_str(), tex->path.c_str());
+	}
+
+	TODO_D("Load FBX textures! You can use fbx shit or not");
 
 	makeVAO(name, verts, vertSize, tris, triSize);
 

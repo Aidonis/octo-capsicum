@@ -42,7 +42,8 @@ void DeferredApplication::onInit()
 	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "../rsc/shaders/cpassVertShader.glsl", "../rsc/shaders/cpassFragShader.glsl");
-
+	a.loadTexture("soulspear_diffuse.tga", "../rsc/models/soulspear/soulspear_diffuse.tga");
+	a.loadTexture("soulspear_normal.tga", "../rsc/models/soulspear/soulspear_normal.tga");
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "../rsc/models/soulspear/soulspear.fbx");
 }
@@ -86,13 +87,13 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	m_directionalLightPass->prep();
-	m_directionalLightPass->draw(*m_camera, *m_light);
-	m_directionalLightPass->post();
+	//m_directionalLightPass->prep();
+	//m_directionalLightPass->draw(*m_camera, *m_light);
+	//m_directionalLightPass->post();
 
-	m_compositePass->prep();
-	m_compositePass->draw();
-	m_compositePass->post();
+	//m_compositePass->prep();
+	//m_compositePass->draw();
+	//m_compositePass->post();
 }
 
 void DeferredApplication::onTerm()

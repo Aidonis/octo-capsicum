@@ -9,8 +9,11 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 	switch (type)
 	{
 	case nsfw::UNIFORM::FLO1: //TODO_D("Setup float uniform!");
-		glUniform1f(location, *(GLfloat*)value); 
+	{
+		float val = *(GLfloat*)value;
+		glUniform1f(location, *(GLfloat*)value);
 		break;
+	}
 	case nsfw::UNIFORM::FLO3: //TODO_D("Setup vec3 uniform!");
 		glUniform3fv(location, 1, (GLfloat*)value);
 		break;
@@ -24,8 +27,11 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 		glUniform1i(location, *(GLint*)value);
 		break;
 	case nsfw::UNIFORM::TEX2: //TODO_D("Setup texture2D uniform!");
+	{
+		unsigned int val = *(GLuint*)value;
 		glUniform1ui(location, *(GLuint*)value);
 		break;
+	}
 	default:
 		TODO_D("INVALID Uniform type.");
 		break;
