@@ -109,7 +109,7 @@ namespace nsfw
         GL_HANDLE operator[](const AssetKey &key) const { return getVERIFIED(key); }
 
 		// @esme: what do it do
-        const void *getUNIFORM(const AssetKey &key) { return handles.find(key)._Ptr; }
+        const void *getUNIFORM(const AssetKey &key) { return &handles.find(key)._Ptr->_Myval.second; }
 
 
 		/////////////////////

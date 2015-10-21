@@ -18,7 +18,7 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.55f, 0.25f, 0.25f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, 800, 600);
+		//glViewport(0, 0, 800, 600);
 		glUseProgram(*shader);
 	}
 	void post(){
@@ -34,25 +34,14 @@ public:
 
 	void draw(const Camera &c, const Geometry &g)	
 	{
-		nsfw::Assets assman = nsfw::Assets::instance(); // god bless bryman
-		auto autoNormal = assman.get<nsfw::ASSET::TEXTURE>("soulspear_normal.tga");
-		auto autoDiffuse = assman.get<nsfw::ASSET::TEXTURE>("soulspear_diffuse.tga");
-		auto autoSpecular = assman.get<nsfw::ASSET::TEXTURE>("soulspear_specular.tga");
-
-		
-		std::cout << glm::to_string(c.getProjection()) << std::endl;
 
 		setUniform("Projection",	nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
 		setUniform("View",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
 		setUniform("Model",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
-		TODO_D("Work out const void* parameter and overloaded operater BS");
-		//setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
-		setUniform("DiffuseMap", nsfw::UNIFORM::TEX2, &autoDiffuse, 0);
-		//setUniform("DiffuseMap", nsfw::UNIFORM::TEX2, nsfw::Assets::instance().get<TEXTURE>(g.diffuse.name.c_str()), 0);
-		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, &autoNormal,   1);
-		//setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  g.specular, 2);
-		setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  &autoSpecular, 2);
+		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
+		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
+		setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  g.specular, 2);
 
 		setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);
 

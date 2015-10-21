@@ -280,50 +280,69 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 
 bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
-	//name/meshName
-	//name/textureName
-	//WIP Make able to load multiple meshes / beware mesh names
 	FBXFile file;
-	file.load(path, FBXFile::UNITS_METER, false, false, false);
-	//file.initialiseOpenGLTextures();
-
-	//for (int i = 0; i < file.getTextureCount(); ++i)
-	//{
-	//	file.getTextureByIndex(i)->handle
+	//file.load(path, FBXFile::UNITS_METER, false, false, false);
+	////file.initialiseOpenGLTextures();
+	////for (int i = 0; i < file.getTextureCount(); ++i)
+	////{
+	////	file.getTextureByIndex(i)->handle
+	////}
+	//FBXMeshNode* mesh = file.getMeshByIndex(0);
+	//unsigned int vertSize, triSize;
+	//Vertex* verts = new Vertex[vertSize = mesh->m_vertices.size()];
+	//unsigned *tris = new unsigned[triSize = mesh->m_indices.size()];
+	////Load Vert Data
+	//for (int i = 0; i < mesh->m_vertices.size(); i++){
+	//	verts[i] = { mesh->m_vertices[i].position, mesh->m_vertices[i].normal, mesh->m_vertices[i].tangent, mesh->m_vertices[i].texCoord1 };
 	//}
-
-	FBXMeshNode* mesh = file.getMeshByIndex(0);
-
-	unsigned int vertSize, triSize;
-	Vertex* verts = new Vertex[vertSize = mesh->m_vertices.size()];
-	unsigned *tris = new unsigned[triSize = mesh->m_indices.size()];
-
-	//Load Vert Data
-	for (int i = 0; i < mesh->m_vertices.size(); i++){
-		verts[i] = { mesh->m_vertices[i].position, mesh->m_vertices[i].normal, mesh->m_vertices[i].tangent, mesh->m_vertices[i].texCoord1 };
+	////LoadTri Data
+	//for (int i = 0; i < mesh->m_indices.size(); i++){
+	//	tris[i] = mesh->m_indices[i];
+	//}
+	////load textures
+	//for (int i = 0; i < file.getTextureCount(); i++)
+	//{
+	//	FBXTexture* tex = file.getTextureByIndex(i);
+	//	loadTexture(tex->name.c_str(), tex->path.c_str());
+	//}
+	//TODO_D("Load FBX textures! You can use fbx shit or not");
+	//makeVAO(name, verts, vertSize, tris, triSize);
+	//file.unload();
+	std::vector<Vertex> vertices;
+	std::vector<unsigned> indices;
+	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);
+	if (success) {
+		std::cout << "Error loading FBX file:\n";
+		assert(false);
+		return;
 	}
 
-	//LoadTri Data
-	for (int i = 0; i < mesh->m_indices.size(); i++){
-		tris[i] = mesh->m_indices[i];
+	//load meshes
+	assert(file.getMeshCount() > 0);
+	for (int meshIndex = 0; meshIndex < file.getMeshCount(); meshIndex++){
+		FBXMeshNode* mesh = file.getMeshByIndex(meshIndex);
+
+		for (int verticesIndex = 0; verticesIndex < mesh->m_vertices.size(); verticesIndex++){
+			auto xVert = mesh->m_vertices[verticesIndex];
+			Vertex v;
+			v.position = xVert.position;
+			v.normal = xVert.normal;
+			v.texCoord = xVert.texCoord1;
+			vertices.push_back(v);
+		}
+		indices = mesh->m_indices;
+		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
 	//load textures
-	for (int i = 0; i < file.getTextureCount(); i++)
-	{
+	for (int i = 0; i < file.getTextureCount(); i++){
 		FBXTexture* tex = file.getTextureByIndex(i);
 		loadTexture(tex->name.c_str(), tex->path.c_str());
 	}
-
-	TODO_D("Load FBX textures! You can use fbx shit or not");
-
-	makeVAO(name, verts, vertSize, tris, triSize);
-
 	file.unload();
-
+	return true;
 
 	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
-	return false;
 }
 
 bool nsfw::Assets::loadOBJ(const char * name, const char * path)

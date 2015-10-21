@@ -21,6 +21,9 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 		glUniform4fv(location, 1, (GLfloat*)value);
 		break;
 	case nsfw::UNIFORM::MAT4: //TODO_D("Setup mat4 uniform!");
+		//std::to_string()
+		std::cout << glm::to_string(*((glm::mat4*)value)) << std::endl;
+
 		glUniformMatrix4fv(location, 1, false, (const GLfloat*)value);
 		break;
 	case nsfw::UNIFORM::INT1: //TODO_D("Setup integer uniform!");
