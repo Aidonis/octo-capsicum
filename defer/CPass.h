@@ -52,6 +52,6 @@ public:
 		glBindVertexArray(quadVAOHandle);
 		glDrawElements(GL_TRIANGLES, quadNumtris, GL_UNSIGNED_INT, 0);
 
-		TODO_D("GL BindVAO/DrawElements with quad size and vao");
+		//TODO_D("GL BindVAO/DrawElements with quad size and vao");
 	}
 };

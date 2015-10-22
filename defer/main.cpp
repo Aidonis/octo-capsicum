@@ -50,7 +50,7 @@ void DeferredApplication::onInit()
 
 void DeferredApplication::onPlay()
 {
-	TODO_D("Initialize our scene objects!");
+	//TODO_D("Initialize our scene objects!");
 	m_camera    = new Camera;
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
@@ -60,15 +60,15 @@ void DeferredApplication::onPlay()
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
 
-	m_soulspear->mesh	   = "Soulspear_Low:SoulSpear_Low1";
-	m_soulspear->tris	   = "Soulspear_Low:SoulSpear_Low1";
+	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse   = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
 	m_soulspear->normal    = "soulspear_normal.tga";		// These handle names may not be what your loadFBX sets 
 	m_soulspear->specular  = "soulspear_specular.tga";	// them as! (Assets will report what the key names are though)
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 
-	TODO_D("Initialize our render passes!");
+	//TODO_D("Initialize our render passes!");
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
@@ -77,12 +77,12 @@ void DeferredApplication::onPlay()
 
 void DeferredApplication::onStep()
 {
-	TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
+	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
 	m_light->update();
 	m_camera->update();
 	m_soulspear->update();
 	
-	TODO_D("Draw all of our renderpasses!");
+	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();

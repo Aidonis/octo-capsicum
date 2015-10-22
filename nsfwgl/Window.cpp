@@ -65,10 +65,10 @@ bool nsfw::Window::getShouldClose() const
 		
 	}
 
-	/*int i = 1;
+	int i = 1;
 	if (i == 1){
 		return true;
-	}*/
+	}
 	//TODO();
 	return false;
 	
