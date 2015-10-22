@@ -5,6 +5,9 @@ void nsfw::Window::init(unsigned width, unsigned height)
 	if (glfwInit() == false) {
 		return;
 	}
+
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+
 	window = glfwCreateWindow(width, height, "nsfwGL", nullptr, nullptr);
 
 	this->width = width;
@@ -65,10 +68,10 @@ bool nsfw::Window::getShouldClose() const
 		
 	}
 
-	int i = 1;
+	/*int i = 1;
 	if (i == 1){
 		return true;
-	}
+	}*/
 	//TODO();
 	return false;
 	

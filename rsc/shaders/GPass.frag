@@ -2,7 +2,6 @@
 
 in vec4 vPosition;
 in vec4 vNormal;
-
 in vec2 vTexCoord;
 
 // these should correlate to the color attachments!
@@ -10,8 +9,8 @@ layout(location = 0) out vec3 gpassAlbedo;
 layout(location = 1) out vec3 gpassPosition;
 layout(location = 2) out vec3 gpassNormal;
 
-uniform sampler2D Diffuse;
-uniform sampler2D Normal;
+uniform sampler2D DiffuseTexture;
+uniform sampler2D NormalTexture;
 
 void main()
 {

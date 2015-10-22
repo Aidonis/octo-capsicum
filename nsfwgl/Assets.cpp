@@ -39,20 +39,21 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HAN
 }
 
 unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
-	std::string shaderCode;
 	//openfile
 	std::ifstream stream(path);
-
-	if(stream.is_open()){
-		std::string line = "";
-		while(std::getline(stream, line)){
-			shaderCode += "\n" + line;
-		}
-		stream.close();
+	
+	std::string contents = std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+	if (contents.length() == 0)
+	{
+		std::cerr << "Error loading shader file " << path << "\ntext:\n" << contents << std::endl;
+		assert(false);
+		return 0;
 	}
+	
+	stream.close();
 
 	//convert to cstring 
-	const char* shaderSourcePointer = shaderCode.c_str();
+	const char* shaderSourcePointer = contents.c_str();
 
 	//Create ID
 	unsigned int shader = glCreateShader(shaderType);
@@ -144,18 +145,17 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 {
 	ASSET_LOG(GL_HANDLE_TYPE::FBO);
 	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\nuse makeTexture.\nNOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
-
-	GLuint fbo;
+	
 	//Setup Framebuffer
+	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	
-
-	GLenum attachPoint = GL_COLOR_ATTACHMENT0;
+	int colorAttachmentCount = 0;
 	std::vector<GLenum> drawBuffers;
 
 	for (int i = 0; i < nTextures; i++){
-		const unsigned depth = depths[i];
+		/*const unsigned depth = depths[i];
 		const char* a_name = names[i];
 		makeTexture(a_name, w, h, depth, nullptr);
 
@@ -168,6 +168,13 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
 			drawBuffers.push_back(attachPoint);
 			attachPoint++;
+		}*/
+		makeTexture(names[i], w, h, depths[i]);
+
+		GLenum attachment = (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + colorAttachmentCount);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachment, get(TEXTURE, names[i]), 0);
+		if(attachment != GL_DEPTH_ATTACHMENT){
+			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + colorAttachmentCount++);
 		}
 	}
 
@@ -181,17 +188,17 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 		bool invalidEnum = status == GL_INVALID_ENUM;
 		bool invalidValue = status == GL_INVALID_VALUE;
 		printf("Framebuffer Error!\n");
+		assert(false);
 		return false;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	setINTERNAL(FBO, name, fbo);
-
-	
 	return true;
 }
 
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
+	glGetError();
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
@@ -199,11 +206,30 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	setINTERNAL(TEXTURE, name, tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	
+	if(nullptr == pixels && depth != GL_DEPTH_COMPONENT){
+		GLenum status = glGetError();
+		assert(status == GL_NO_ERROR);
+
+		glTexStorage2D(GL_TEXTURE_2D, 1, depth, w, h);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		assert(status == GL_NO_ERROR);
+	}
+
+	//creating normal texture here / working??
+	else{
+		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
+	/*
 	GLenum a_depth = (depth == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : depth;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);*/
 
 	GLenum error = glGetError();
 	if ( error != GL_NO_ERROR){
@@ -211,6 +237,7 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 		bool invalidValue = error == GL_INVALID_VALUE;
 		printf("error with texture.\n");
 		glBindTexture(GL_TEXTURE_2D, 0);
+		assert(false);
 		return false;
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -272,6 +299,7 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 		glGetProgramInfoLog(shader, length, 0, log);
 		std::cout << "Error linking shader program.\n" << log << std::endl;
 		delete[] log;
+		assert(false);
 		return false;
 	}
 
@@ -282,33 +310,6 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
 	FBXFile file;
-	//file.load(path, FBXFile::UNITS_METER, false, false, false);
-	////file.initialiseOpenGLTextures();
-	////for (int i = 0; i < file.getTextureCount(); ++i)
-	////{
-	////	file.getTextureByIndex(i)->handle
-	////}
-	//FBXMeshNode* mesh = file.getMeshByIndex(0);
-	//unsigned int vertSize, triSize;
-	//Vertex* verts = new Vertex[vertSize = mesh->m_vertices.size()];
-	//unsigned *tris = new unsigned[triSize = mesh->m_indices.size()];
-	////Load Vert Data
-	//for (int i = 0; i < mesh->m_vertices.size(); i++){
-	//	verts[i] = { mesh->m_vertices[i].position, mesh->m_vertices[i].normal, mesh->m_vertices[i].tangent, mesh->m_vertices[i].texCoord1 };
-	//}
-	////LoadTri Data
-	//for (int i = 0; i < mesh->m_indices.size(); i++){
-	//	tris[i] = mesh->m_indices[i];
-	//}
-	////load textures
-	//for (int i = 0; i < file.getTextureCount(); i++)
-	//{
-	//	FBXTexture* tex = file.getTextureByIndex(i);
-	//	loadTexture(tex->name.c_str(), tex->path.c_str());
-	//}
-	//TODO_D("Load FBX textures! You can use fbx shit or not");
-	//makeVAO(name, verts, vertSize, tris, triSize);
-	//file.unload();
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
 	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);

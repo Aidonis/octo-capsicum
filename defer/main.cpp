@@ -28,24 +28,28 @@ void DeferredApplication::onInit()
 	auto &w = nsfw::Window::instance();
 	auto &a = nsfw::Assets::instance();
 
+	// Load Shaders
+	a.loadShader("GeometryPassPhong", "../rsc/shaders/GPass.vert", "../rsc/shaders/GPass.frag");
+	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
+	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
+	a.loadShader("CompPass", "../rsc/shaders/CPass.vert", "../rsc/shaders/CPass.frag");
+
+	//a.loadTexture("soulspear_diffuse.tga", "../rsc/models/soulspear/soulspear_diffuse.tga");
+	//a.loadTexture("soulspear_normal.tga", "../rsc/models/soulspear/soulspear_normal.tga");
+
 	// Setup FBOs
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
-	const unsigned gpassDepths[] = { GL_RGB, GL_RGB, GL_RGB, GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
+	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
 	const char *lpassTextureNames[] = { "LPassColor" };
-	const unsigned lpassDepths[] = { GL_RGB }; // GL_RGB8
-	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
+	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
+	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
 
-	// Load Shaders
-	a.loadShader("GeometryPassPhong", "../rsc/shaders/vertexShader.glsl", "../rsc/shaders/fragmentShader.glsl");
-	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
-	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	a.loadShader("CompPass", "../rsc/shaders/cpassVertShader.glsl", "../rsc/shaders/cpassFragShader.glsl");
-	a.loadTexture("soulspear_diffuse.tga", "../rsc/models/soulspear/soulspear_diffuse.tga");
-	a.loadTexture("soulspear_normal.tga", "../rsc/models/soulspear/soulspear_normal.tga");
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "../rsc/models/soulspear/soulspear.fbx");
+
+
 }
 
 void DeferredApplication::onPlay()
@@ -55,7 +59,7 @@ void DeferredApplication::onPlay()
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
-	m_camera->lookAt(glm::vec3(10), glm::vec3(0), glm::vec3(0,1,0));
+	m_camera->lookAt(glm::vec3(8, 6, 8), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
 
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));

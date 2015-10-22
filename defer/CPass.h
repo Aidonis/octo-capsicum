@@ -18,8 +18,10 @@ public:
 	void prep(){
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.25f, 0.25f, 0.55f, 1);
+		
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(*shader);

@@ -25,8 +25,8 @@ public:
 		//TODO_D("Unset any gl settings");
 		//
 		glDisable(GL_DEPTH_TEST);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glBindVertexArray(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindVertexArray(0);
 		//glUseProgram(0);
 	}
 

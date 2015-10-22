@@ -8,7 +8,6 @@ layout(location = 3) in vec2 TexCoord;
 // view-space normal and position
 out vec4 vPosition;
 out vec4 vNormal;
-
 out vec2 vTexCoord;
 
 uniform mat4 Projection;
@@ -21,7 +20,7 @@ void main()
 	vNormal   = normalize(View * Normal);
     vTexCoord = TexCoord;
 	
-    gl_Position = Projection * View * Model * Position;
+    gl_Position = Projection * View * Position;
 	//gl_Position = vec4((Projection * View * Model * Position).xy, 0.0, 1);
     //gl_Position = vec4(1,1,1,1);
 }
