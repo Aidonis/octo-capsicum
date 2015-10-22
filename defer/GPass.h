@@ -14,8 +14,8 @@ public:
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
 		glEnable(GL_DEPTH_TEST);
-		//glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.55f, 0.25f, 0.25f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glViewport(0, 0, 800, 600);
@@ -25,9 +25,9 @@ public:
 		//TODO_D("Unset any gl settings");
 		//
 		glDisable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindVertexArray(0);
-		glUseProgram(0);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glBindVertexArray(0);
+		//glUseProgram(0);
 	}
 
 	GPass(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
@@ -41,9 +41,9 @@ public:
 
 		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
 		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
-		setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  g.specular, 2);
+		//setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  g.specular, 2);
 
-		setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);
+		//setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);
 
         /*nsfw::Assets::instance().get(g.mesh);
         nsfw::Assets::instance().get(g.tris);

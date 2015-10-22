@@ -183,9 +183,10 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 		printf("Framebuffer Error!\n");
 		return false;
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	setINTERNAL(FBO, name, fbo);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
 	return true;
 }
 
@@ -311,10 +312,10 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
 	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);
-	if (success) {
+	if (!success) {
 		std::cout << "Error loading FBX file:\n";
 		assert(false);
-		return;
+		return false;
 	}
 
 	//load meshes
@@ -339,7 +340,6 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 		FBXTexture* tex = file.getTextureByIndex(i);
 		loadTexture(tex->name.c_str(), tex->path.c_str());
 	}
-	file.unload();
 	return true;
 
 	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
