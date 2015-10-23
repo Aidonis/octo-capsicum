@@ -21,6 +21,4 @@ void main()
     vTexCoord = TexCoord;
 	
     gl_Position = Projection * View * Position;
-	//gl_Position = vec4((Projection * View * Model * Position).xy, 0.0, 1);
-    //gl_Position = vec4(1,1,1,1);
 }

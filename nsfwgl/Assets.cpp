@@ -1,5 +1,6 @@
 #include "nsfw.h"
 
+
 using namespace nsfw::ASSET;
 
 const char *nsfw::TYPE_NAMES[eSIZE + 1] = { "NONE","vao","ibo","vbo","tri-size","fbo","rbo","texture","shader","SIZE" };
@@ -10,6 +11,18 @@ const char *nsfw::TYPE_NAMES[eSIZE + 1] = { "NONE","vao","ibo","vbo","tri-size",
 #define ASSET_LOG(type) do {} while (0)
 #endif
 
+// verifies if a file exists at the path provided
+// - returns true if valid file
+// - returns false if invalid file
+// CONSIDER: should this make use of an enum instead?
+// CONSIDER: should this tell us if we were denied access or if this is a dir?
+bool validateFilePath(const char * path)
+{
+	// portable way to check if dir exists :: http://stackoverflow.com/a/18101042
+
+	struct stat info;	// we'll keep this for breakpoints for now...
+	return stat(path, &info) == 0 ? true : false;
+}
 
 nsfw::GL_HANDLE nsfw::Assets::getVERIFIED(const AssetKey &key) const
 {
@@ -39,6 +52,14 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HAN
 }
 
 unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
+	//Valid File Path
+#ifdef _DEBUG
+	if (!validateFilePath(path)) {
+		std::cerr << "The source for a sub-shader could not be found at " << path << std::endl;
+		return false;
+	}
+#endif
+
 	//openfile
 	std::ifstream stream(path);
 	
@@ -109,11 +130,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ibo);
 
-	setINTERNAL(VAO, name, vao);
-	setINTERNAL(IBO, name, ibo);
-	setINTERNAL(VBO, name, vbo);
-	setINTERNAL(GL_HANDLE_TYPE::SIZE, name, tsize);
-
 	glBindVertexArray(vao);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -136,6 +152,12 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	setINTERNAL(VAO, name, vao);
+	setINTERNAL(IBO, name, ibo);
+	setINTERNAL(VBO, name, vbo);
+	setINTERNAL(ASSET::GL_HANDLE_TYPE::SIZE, name, tsize);
 
 	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	return false;
@@ -260,38 +282,67 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 	ASSET_LOG(GL_HANDLE_TYPE::SHADER);
 	//TODO_D("Load shader from a file.");
 
-	unsigned int vertex = loadShaderFile(GL_VERTEX_SHADER, vpath);
-	if (vertex == 0 ){
-		return false;
-	}
-	unsigned int fragment = loadShaderFile(GL_FRAGMENT_SHADER, fpath);
-	if(fragment == 0 ){
-		return false;
-	}
-
-	int success = GL_FALSE;
-	GLuint shader = glCreateProgram();
-	glAttachShader(shader, vertex);
-	glAttachShader(shader, fragment);
-	glLinkProgram(shader);
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
+	assert(name != nullptr && vpath != nullptr && fpath != nullptr);
 
 #ifdef _DEBUG
-	glGetProgramiv(shader, GL_LINK_STATUS, &success);
-	if(success == GL_FALSE){
-		int length = 0;
-		glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &length);
-		char* log = new char[length];
-		glGetProgramInfoLog(shader, length, 0, log);
-		std::cout << "Error linking shader program.\n" << log << std::endl;
-		delete[] log;
-		assert(false);
-		return false;
+	if (!validateFilePath(vpath) || !validateFilePath(fpath)) {
+		std::cerr << "A porblem occured while attempting to laod a shader program" << std::endl;
+
+		if (!validateFilePath(vpath)) {
+			std::cerr << "Could not locate the Vertex Shader at " << vpath << std::endl;
+		}
+
+		if (!validateFilePath(fpath)) {
+			std::cerr << "Could not locate the Fragment Shader at " << vpath << std::endl;
+		}
 	}
 #endif
 
-	setINTERNAL(SHADER, name, shader);
+
+
+	unsigned int vShader = loadShaderFile(GL_VERTEX_SHADER, vpath);
+	unsigned int fShader = loadShaderFile(GL_FRAGMENT_SHADER, fpath);
+
+	if (!(vShader > 0) || !(fShader > 0)) {
+		std::cerr << "One or more shader failed to compile!" << std::endl;
+
+		//clean up dead shaders
+		if (vShader > 0) {
+			glDeleteShader(vShader);
+		}
+
+		if (fShader > 0) {
+			glDeleteShader(fShader);
+		}
+
+		assert(vShader > 0 && fShader > 0 && "One or more shader failed to compile!");
+	}
+
+	//int success = GL_FALSE;
+	GLuint shaderName = glCreateProgram();
+	assert(shaderName != 0 && "A porblem occured while attempting to create a shader program.");
+
+	glAttachShader(shaderName, vShader);
+	glAttachShader(shaderName, fShader);
+	glLinkProgram(shaderName);
+
+#ifdef _DEBUG
+	int shaderStatus = GL_FALSE;
+	glGetProgramiv(shaderName, GL_LINK_STATUS, &shaderStatus);
+	if (shaderStatus == GL_FALSE) {
+		int logLen = 0;
+		glGetProgramiv(shaderName, GL_INFO_LOG_LENGTH, &logLen);
+		char* log = new char[logLen];
+		glGetProgramInfoLog(shaderName, logLen, 0, log);
+		std::cerr << "A problem occurred while attempting to link the shader program." << std::endl << log << std::endl;
+		delete[] log;
+
+	}
+#endif
+	glDeleteShader(vShader);
+	glDeleteShader(fShader);
+
+	setINTERNAL(ASSET::GL_HANDLE_TYPE::SHADER, name, shaderName);
 	return true;
 }
 
@@ -317,6 +368,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 			Vertex v;
 			v.position = xVert.position;
 			v.normal = xVert.normal;
+			v.tangent = xVert.tangent;
 			v.texCoord = xVert.texCoord1;
 			vertices.push_back(v);
 		}
