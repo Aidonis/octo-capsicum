@@ -19,10 +19,10 @@ void main()
 	// Note: you could use a material color
 	// or sample a texture for albedo
 	
-	gpassAlbedo = vec3(1);
-    //gpassAlbedo = texture(Diffuse, vTexCoord).xyz;
+	//gpassAlbedo = vec3(1);
+    gpassAlbedo = texture(DiffuseTexture, vTexCoord).xyz;
 	
 	gpassPosition = vPosition.xyz;
 	gpassNormal = vNormal.xyz;
-    //gpassNormal = texture(Normal, vTexCoord).xyz;
+    //gpassNormal = texture(NormalTexture, vTexCoord).xyz;
 }

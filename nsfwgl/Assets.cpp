@@ -277,6 +277,7 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
+#ifdef _DEBUG
 	glGetProgramiv(shader, GL_LINK_STATUS, &success);
 	if(success == GL_FALSE){
 		int length = 0;
@@ -288,6 +289,7 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 		assert(false);
 		return false;
 	}
+#endif
 
 	setINTERNAL(SHADER, name, shader);
 	return true;
