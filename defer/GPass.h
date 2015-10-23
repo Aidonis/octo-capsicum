@@ -14,7 +14,7 @@ public:
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
 		glEnable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.55f, 0.25f, 0.25f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

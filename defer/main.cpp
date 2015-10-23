@@ -59,7 +59,7 @@ void DeferredApplication::onPlay()
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
-	m_camera->lookAt(glm::vec3(8, 6, 8), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
+	m_camera->lookAt(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
 
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
@@ -95,9 +95,9 @@ void DeferredApplication::onStep()
 	//m_directionalLightPass->draw(*m_camera, *m_light);
 	//m_directionalLightPass->post();
 
-	//m_compositePass->prep();
-	//m_compositePass->draw();
-	//m_compositePass->post();
+	m_compositePass->prep();
+	m_compositePass->draw();
+	m_compositePass->post();
 }
 
 void DeferredApplication::onTerm()
