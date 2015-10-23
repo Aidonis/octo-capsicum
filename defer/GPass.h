@@ -14,7 +14,7 @@ public:
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
 		glEnable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.55f, 0.25f, 0.25f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -49,10 +49,11 @@ public:
         nsfw::Assets::instance().get(g.tris);
         *g.mesh;
         *g.tris;*/
-
+		
 		glBindVertexArray(*g.mesh);
-		unsigned ind_count = nsfw::Assets::instance().get(g.tris);
-		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);
+		//unsigned ind_count = nsfw::Assets::instance().get(g.tris);
+		unsigned int cnt = *g.tris;
+		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, nullptr);
 		//TODO_D("bindVAO and Draw Elements!");
 	}
 };

@@ -95,9 +95,9 @@ void DeferredApplication::onStep()
 	//m_directionalLightPass->draw(*m_camera, *m_light);
 	//m_directionalLightPass->post();
 
-	m_compositePass->prep();
-	m_compositePass->draw();
-	m_compositePass->post();
+	//m_compositePass->prep();
+	//m_compositePass->draw();
+	//m_compositePass->post();
 }
 
 void DeferredApplication::onTerm()

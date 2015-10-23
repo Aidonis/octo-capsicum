@@ -117,17 +117,17 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindVertexArray(vao);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vsize, verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ARRAY_BUFFER, tsize, tris, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * tsize, tris, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0); //position
 	glEnableVertexAttribArray(1); //normal
 	glEnableVertexAttribArray(2); //tangent
 	glEnableVertexAttribArray(3); //UV Coord
 
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 1));
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 2));
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 3));
@@ -155,20 +155,6 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	std::vector<GLenum> drawBuffers;
 
 	for (int i = 0; i < nTextures; i++){
-		/*const unsigned depth = depths[i];
-		const char* a_name = names[i];
-		makeTexture(a_name, w, h, depth, nullptr);
-
-		GL_HANDLE tex = get(TEXTURE, a_name);
-
-		if(depth == GL_DEPTH_COMPONENT){
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
-		}
-		else{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
-			drawBuffers.push_back(attachPoint);
-			attachPoint++;
-		}*/
 		makeTexture(names[i], w, h, depths[i]);
 
 		GLenum attachment = (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + colorAttachmentCount);
@@ -333,14 +319,27 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 			vertices.push_back(v);
 		}
 		indices = mesh->m_indices;
+		
+		//
 		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
 	//load textures
 	for (int i = 0; i < file.getTextureCount(); i++){
 		FBXTexture* tex = file.getTextureByIndex(i);
-		loadTexture(tex->name.c_str(), tex->path.c_str());
+		assert(nullptr != tex->data && "error loading texture.\n");
+		uint imageFormat = tex->format;
+		switch (imageFormat) {
+		case 1: imageFormat = GL_RED; break;
+		case 2: imageFormat = GL_RG; break;
+		case 3: imageFormat = GL_RGB; break;
+		case 4: imageFormat = GL_RGBA; break;
+		}
+
+		makeTexture(tex->name.c_str(), tex->width, tex->height, imageFormat, (char*)tex->data);
 	}
+	
+	file.unload();
 	return true;
 
 	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
