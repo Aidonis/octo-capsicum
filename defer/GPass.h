@@ -13,31 +13,48 @@ public:
 	void prep(){
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
+		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.55f, 0.25f, 0.25f, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glViewport(0, 0, 800, 600);
-		glUseProgram(*shader);
 
 #ifdef _DEBUG
 		GLenum status = glGetError();
-		if (status != GL_NO_ERROR) {
-			std::cerr << "An error occurred while prepping a render pass." << std::endl;
+		if (status != GL_NO_ERROR)
+		{
+			std::cerr << "A error occurred while prepping a render pass." << std::endl;
 
-			std::cerr << (status == GL_INVALID_VALUE) ? "GL_INVALID_VALUE :: An invalid shader name was provided." :
-				(status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: The shader could not be bound, if valid" :
+			std::cerr << (status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: An invalid FBO name was provided." :
 				"An unknown error occurred.";
+
 			assert(false && "Check stderr for more information.");
 		}
 #endif
 
+		//
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(*shader);
+
+
+#ifdef _DEBUG
+		status = glGetError();
+		if (status != GL_NO_ERROR)
+		{
+			std::cerr << "A error occurred while prepping a render pass." << std::endl;
+
+			std::cerr << (status == GL_INVALID_VALUE) ? "GL_INVALID_VALUE :: An invalid shader name was provided." :
+				(status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: The shader could not be bound, if valid." :
+				"An unknown error occurred.";
+
+			assert(false && "Check stderr for more information.");
+		}
+#endif
 	}
 	void post(){
 		//TODO_D("Unset any gl settings");
 		//
 		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindVertexArray(0);
 		//glUseProgram(0);
@@ -53,15 +70,7 @@ public:
 		setUniform("Model",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
-		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
-		//setUniform("SpecularMap",	nsfw::UNIFORM::TEX2,  g.specular, 2);
-
-		//setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);
-
-        /*nsfw::Assets::instance().get(g.mesh);
-        nsfw::Assets::instance().get(g.tris);
-        *g.mesh;
-        *g.tris;*/
+		//setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
 		
 		glBindVertexArray(*g.mesh);
 		//unsigned ind_count = nsfw::Assets::instance().get(g.tris);

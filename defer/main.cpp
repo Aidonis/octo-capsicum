@@ -30,7 +30,7 @@ void DeferredApplication::onInit()
 
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "../rsc/shaders/GPass.vert", "../rsc/shaders/GPass.frag");
-	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
+	a.loadShader("LightPassDirectional", "../rsc/shaders/LPass.vert", "../rsc/shaders/LPass.frag");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "../rsc/shaders/CPass.vert", "../rsc/shaders/CPass.frag");
 
@@ -91,9 +91,9 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	//m_directionalLightPass->prep();
-	//m_directionalLightPass->draw(*m_camera, *m_light);
-	//m_directionalLightPass->post();
+	m_directionalLightPass->prep();
+	m_directionalLightPass->draw(*m_camera, *m_light);
+	m_directionalLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();

@@ -20,7 +20,7 @@ public:
 		//
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.25f, 0.25f, 0.55f, 1);
+		glClearColor(0.33f, 0.f, 0.33f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(*shader);
@@ -41,8 +41,6 @@ public:
 	void post(){
 		//TODO_D("Unset any gl settings");
 		//
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindVertexArray(0);
 		glUseProgram(0);
 	}
 

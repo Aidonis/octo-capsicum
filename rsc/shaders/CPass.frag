@@ -20,5 +20,6 @@ void main()
     
 
     FragColor = vec4(albedoColor * lightColor, 1);
+    //FragColor = vec4(1);
 
 }

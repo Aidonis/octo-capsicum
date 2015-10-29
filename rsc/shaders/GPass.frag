@@ -10,7 +10,7 @@ layout(location = 1) out vec3 gpassPosition;
 layout(location = 2) out vec3 gpassNormal;
 
 uniform sampler2D DiffuseTexture;
-uniform sampler2D NormalTexture;
+//uniform sampler2D NormalTexture;
 
 void main()
 {
@@ -19,10 +19,8 @@ void main()
 	// Note: you could use a material color
 	// or sample a texture for albedo
 	
-	//gpassAlbedo = vec3(1);
     gpassAlbedo = texture(DiffuseTexture, vTexCoord).xyz;
 	
 	gpassPosition = vPosition.xyz;
 	gpassNormal = vNormal.xyz;
-    //gpassNormal = texture(NormalTexture, vTexCoord).xyz;
 }
