@@ -91,9 +91,9 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	m_directionalLightPass->prep();
-	m_directionalLightPass->draw(*m_camera, *m_light);
-	m_directionalLightPass->post();
+	//m_directionalLightPass->prep();
+	//m_directionalLightPass->draw(*m_camera, *m_light);
+	//m_directionalLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();

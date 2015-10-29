@@ -59,6 +59,13 @@ unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
 		return false;
 	}
 #endif
+	/*std::ifstream in(path));
+	std::string contents((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+	char* src = new char[contents.length() + 1];
+	strncpy_s(src, contents.length() + 1, contents.c_str(), contents.length());
+	unsigned int shaderName = glCreateShader(shaderType);
+	assert(glGetError() != GL_INVALID_ENUM && "Invalid shader type provided when creating a sub-shader");
+	glShaderSource(shaderName, 1, &src, 0);*/
 
 	//openfile
 	std::ifstream stream(path);
@@ -72,29 +79,22 @@ unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
 	}
 	
 	stream.close();
-
 	//convert to cstring 
 	const char* shaderSourcePointer = contents.c_str();
-
 	//Create ID
 	unsigned int shader = glCreateShader(shaderType);
-
 	//Load Source code
 	glShaderSource(shader, 1, &shaderSourcePointer, NULL);
-
 	//compile shader
 	glCompileShader(shader);
-
 	//error check
 	int status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status == GL_FALSE){
 		int infoLogLength;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
 		char* infoLog = new char[infoLogLength + 1];
 		glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
-
 		const char* shaderName = NULL;
 		switch(shaderType){
 		case GL_VERTEX_SHADER:
@@ -135,8 +135,12 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
 	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * tsize, tris, GL_STATIC_DRAW);
+#ifdef _DEBUG
+	assert(glGetError() == GL_NO_ERROR);
+	GLint bufferedVBODataSize = 0;
+	glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferedVBODataSize);
+	assert(sizeof(Vertex) * vsize == bufferedVBODataSize && "Mismatch detected in vertex data size and buffer data size!");
+#endif
 
 	glEnableVertexAttribArray(0); //position
 	glEnableVertexAttribArray(1); //normal
@@ -147,6 +151,16 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 1));
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 2));
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4) * 3));
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * tsize, tris, GL_STATIC_DRAW);
+
+#ifdef _DEBUG
+	assert(glGetError() == GL_NO_ERROR);
+	GLint bufferedIBODataSize = 0;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferedIBODataSize);
+	assert(sizeof(unsigned int) * tsize == bufferedIBODataSize && "Mismatch detected in index data size and buffer data size!");
+#endif
 
 	//Unbind
 	glBindVertexArray(0);
@@ -169,7 +183,7 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\nuse makeTexture.\nNOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
 	
 	//Setup Framebuffer
-	GLuint fbo;
+	GLuint fbo = 0;
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	
@@ -209,9 +223,9 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	glGetError();
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
-	GLuint tex;
+	GLuint tex = 0;
 	glGenTextures(1, &tex);
-	setINTERNAL(TEXTURE, name, tex);
+	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	
 	if(nullptr == pixels && depth != GL_DEPTH_COMPONENT){
@@ -239,6 +253,7 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);*/
 
+#ifdef _DEBUG
 	GLenum error = glGetError();
 	if ( error != GL_NO_ERROR){
 		bool invalidEnum = error == GL_INVALID_ENUM;
@@ -248,6 +263,8 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 		assert(false);
 		return false;
 	}
+#endif
+	setINTERNAL(TEXTURE, name, tex);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
@@ -351,7 +368,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	FBXFile file;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
-	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);
+	bool success = file.load(path, FBXFile::UNITS_CENTIMETER, true, false, false);
 	if (!success) {
 		std::cout << "Error loading FBX file:\n";
 		assert(false);

@@ -55,8 +55,8 @@ public:
 		//
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
+		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindVertexArray(0);
 		//glUseProgram(0);
 	}
 
@@ -70,11 +70,11 @@ public:
 		setUniform("Model",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
-		//setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
+		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
+		setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);
 		
 		glBindVertexArray(*g.mesh);
 		//unsigned ind_count = nsfw::Assets::instance().get(g.tris);
-		unsigned int cnt = *g.tris;
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, nullptr);
 		//TODO_D("bindVAO and Draw Elements!");
 	}
