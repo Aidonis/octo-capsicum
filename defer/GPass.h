@@ -14,7 +14,7 @@ public:
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		//
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		glDepthMask(GL_TRUE);
+		//glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 
 #ifdef _DEBUG
@@ -54,7 +54,7 @@ public:
 		//TODO_D("Unset any gl settings");
 		//
 		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
+		//glDepthMask(GL_FALSE);
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//glUseProgram(0);
@@ -71,7 +71,7 @@ public:
 
 		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
 		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
-		setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);
+		setUniform("Specular",		nsfw::UNIFORM::TEX2, g.specular, 2);
 		
 		glBindVertexArray(*g.mesh);
 		//unsigned ind_count = nsfw::Assets::instance().get(g.tris);

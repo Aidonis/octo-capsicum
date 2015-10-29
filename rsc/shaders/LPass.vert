@@ -7,8 +7,8 @@ layout(location = 3) in vec2 TexCoord;
 
 out vec2 vTexCoord;
 
-void main()
+void main() 
 {
-    vTexCoord = TexCoord;
-    gl_Position = vec4(Position.xyz, 1);
+	vTexCoord = TexCoord;
+	gl_Position = Position;
 }

@@ -59,10 +59,7 @@ void DeferredApplication::onPlay()
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
-	m_camera->lookAt(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
-
-	m_light->color      = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
+	m_camera->lookAt(glm::vec3(2), glm::vec3(0,.5f,0), glm::vec3(0, 1, 0));
 
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
@@ -73,6 +70,12 @@ void DeferredApplication::onPlay()
 	m_soulspear->transform = mat4(1);
 
 	//TODO_D("Initialize our render passes!");
+	
+	//Directional Light
+	m_light->color = glm::vec3(1, 1, 1);
+	m_light->direction = glm::normalize(glm::vec3(0, -1, .25f));
+	m_light->ambientIntensity = 1;
+	m_light->diffuseIntensity = 1;
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
@@ -91,9 +94,9 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	//m_directionalLightPass->prep();
-	//m_directionalLightPass->draw(*m_camera, *m_light);
-	//m_directionalLightPass->post();
+	m_directionalLightPass->prep();
+	m_directionalLightPass->draw(*m_camera, *m_light);
+	m_directionalLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();

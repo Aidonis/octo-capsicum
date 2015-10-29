@@ -368,7 +368,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	FBXFile file;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
-	bool success = file.load(path, FBXFile::UNITS_CENTIMETER, true, false, false);
+	bool success = file.load(path, FBXFile::UNITS_CENTIMETER);
 	if (!success) {
 		std::cout << "Error loading FBX file:\n";
 		assert(false);

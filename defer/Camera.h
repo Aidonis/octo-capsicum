@@ -10,7 +10,7 @@ struct Camera
 	glm::mat4 transform;
 	float nearPlane, farPlane, aspect, fov;
 
-	Camera() : nearPlane(0), farPlane(100), aspect(nsfw::Window::instance().getWidth() / (float)nsfw::Window::instance().getHeight()), fov(90) {}
+	Camera() : nearPlane(1), farPlane(100), aspect(800.f/600.f), fov(90) {}
 
 	void update(){
 		

@@ -5,14 +5,26 @@
 
 class LPassD : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> normal, position;
+	nsfw::Asset<nsfw::ASSET::TEXTURE> normal, position, specular;
+	glm::vec3 ambientLight = glm::vec3(0, 0, .2f);
+	float specPower = 40;
 
 public:
-	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
+
+
+	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), specular("GPassSpecular") {}
 
 	void prep(){
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		glUseProgram(*shader);
 
 #ifdef _DEBUG
 		GLenum status = glGetError();
@@ -27,13 +39,7 @@ public:
 		}
 #endif
 
-		glClear(GL_COLOR_BUFFER_BIT);
 
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
-
-		glUseProgram(*shader);
 
 	}
 	void post(){
@@ -46,15 +52,19 @@ public:
 
 	void draw(const Camera &c, const LightD &l)
 	{
-		setUniform("LightDirection", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("LightColor",     nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("directional.direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
+		setUniform("directional.color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
 
-		setUniform("Normal", nsfw::UNIFORM::TEX2, &normal, 0);
-		setUniform("Position", nsfw::UNIFORM::TEX2, &position, 1);
+		//setUniform("Normal", nsfw::UNIFORM::TEX2, &normal, 0);
+		//setUniform("Position", nsfw::UNIFORM::TEX2, &position, 1);
 
 		setUniform("ViewPosition", nsfw::UNIFORM::FLO3, glm::value_ptr(c.transform[3]));
-		float specPow = 16;
-		setUniform("SpecularPower", nsfw::UNIFORM::FLO1, &specPow);
+		
+		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
+		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
+		
+		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
+		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 
 		//setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
 
