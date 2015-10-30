@@ -6,8 +6,8 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> normal, position, specular;
-	glm::vec3 ambientLight = glm::vec3(0, 0, .2f);
-	float specPower = 40;
+	glm::vec3 ambientLight = glm::vec3(0, 0, .25f);
+	float specPower = 128;
 
 public:
 

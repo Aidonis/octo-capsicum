@@ -59,7 +59,7 @@ void DeferredApplication::onPlay()
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
-	m_camera->lookAt(glm::vec3(2), glm::vec3(0,.5f,0), glm::vec3(0, 1, 0));
+	m_camera->lookAt(glm::vec3(1,2,-3), glm::vec3(0,.55f,0), glm::vec3(0, 1, 0));
 
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
@@ -73,7 +73,7 @@ void DeferredApplication::onPlay()
 	
 	//Directional Light
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, -1, .25f));
+	m_light->direction = glm::normalize(glm::vec3(0, 0, .25f));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
