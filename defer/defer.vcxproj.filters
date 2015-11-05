@@ -24,6 +24,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FlyCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPass.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
     <ClInclude Include="GPass.h">
+      <Filter>Header Files\Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="SPass.h">
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
   </ItemGroup>

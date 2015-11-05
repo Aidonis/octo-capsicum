@@ -55,7 +55,7 @@ void DeferredApplication::onInit()
 void DeferredApplication::onPlay()
 {
 	//TODO_D("Initialize our scene objects!");
-	m_camera    = new Camera;
+	m_camera    = new FlyCamera;
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 

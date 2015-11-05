@@ -59,6 +59,8 @@ void nsfw::Window::init(unsigned width, unsigned height)
 
 void nsfw::Window::step()
 {
+	lastElapsedTime = getTime();
+
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 
@@ -69,6 +71,20 @@ void nsfw::Window::term()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+float nsfw::Window::getDeltaTime()
+{
+	float delta = (getTime() - lastElapsedTime);
+
+	if (delta > 5.f)
+	{
+		return 5.f;
+	}
+	else
+	{
+		return delta;
+	}
 }
 
 float nsfw::Window::getTime() const

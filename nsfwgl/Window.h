@@ -18,6 +18,8 @@ namespace nsfw
 		GLFWwindow *window;
 		unsigned width, height;		// keep track of width height- needed for glViewport FBO integration
 
+		double lastElapsedTime;
+
 		Window():window(nullptr),width(0),height(0) {}
 	public:
 		static Window &instance() { static Window w; return w; }
@@ -30,6 +32,8 @@ namespace nsfw
 
 		// kill the context!
 		void term();
+
+		float nsfw::Window::getDeltaTime();
 
 		// just wrap what GLFW already does
 		float	  getTime()                  const;
