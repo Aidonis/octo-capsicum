@@ -12,7 +12,7 @@ class LPassD : public nsfw::RenderPass
 public:
 
 
-	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), specular("GPassSpecular"), shadowmap("ShadowsMap") {}
+	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), specular("GPassSpecular"), shadowmap("ShadowMap") {}
 
 	void prep(){
 		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");

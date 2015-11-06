@@ -33,12 +33,6 @@ void main()
     vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
     vec3 position = texture(positionTexture, vTexCoord).xyz;
 
-    //compute diffuse lighting
-    //vec3 L = directional.direction;
-    //vec3 L = (cameraView * vec4(directional.direction, 0)).xyz;
-   // float diffuseLight = max(dot(normal, L), 0);
-    //vec3 diffuseResult = directional.color * diffuseLight;
-
     //Shadows
     mat4 lightViewProjection = textureSpaceOffset * directional.projection * directional.view;
     vec4 shadowCoord = lightViewProjection * inverse(cameraView) * vec4(position, 1);
