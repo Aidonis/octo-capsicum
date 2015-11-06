@@ -53,5 +53,8 @@
     <ClInclude Include="SPass.h">
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
+    <ClInclude Include="SCPass.h">
+      <Filter>Header Files\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

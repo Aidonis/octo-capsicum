@@ -67,7 +67,7 @@ void FlyCamera::update()
 		// pitch
 		if (deltaY != 0)
 		{
-			mat = glm::rotate((float)-deltaY * deltaTime, glm::vec3(transform[0].x, transform[0].y, transform[0].z));
+			mat = glm::rotate((float)-deltaY * deltaTime * 10, glm::vec3(transform[0].x, transform[0].y, transform[0].z));
 			//mat = glm::axisAngleMatrix(vec3(transform[0].xyz), (float)-deltaY * deltaTime);
 			transform[0] = mat * transform[0];
 			transform[1] = mat * transform[1];
@@ -78,7 +78,7 @@ void FlyCamera::update()
 		// yaw
 		if (deltaX != 0)
 		{
-			mat = glm::rotate((float)-deltaX * deltaTime, glm::vec3(0, 1, 0));
+			mat = glm::rotate((float)-deltaX * deltaTime * 10, glm::vec3(0, 1, 0));
 			//mat = glm::axisAngleMatrix(glm::vec3(0, 1, 0), (float)-deltaX * deltaTime);
 			transform[0] = mat * transform[0];
 			transform[1] = mat * transform[1];

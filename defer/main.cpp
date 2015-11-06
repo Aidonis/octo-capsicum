@@ -8,6 +8,7 @@
 #include "GPass.h"
 #include "CPass.h"
 #include "LPassD.h"
+#include "SPass.h"
 
 using namespace nsfw;
 
@@ -33,6 +34,7 @@ void DeferredApplication::onInit()
 	a.loadShader("LightPassDirectional", "../rsc/shaders/LPass.vert", "../rsc/shaders/LPass.frag");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "../rsc/shaders/CPass.vert", "../rsc/shaders/CPass.frag");
+	a.loadShader("ShadowCreationPass", "../rsc/shaders/SPass.vert", "../rsc/shaders/SPass.frag");
 
 	//a.loadTexture("soulspear_diffuse.tga", "../rsc/models/soulspear/soulspear_diffuse.tga");
 	//a.loadTexture("soulspear_normal.tga", "../rsc/models/soulspear/soulspear_normal.tga");
@@ -46,8 +48,13 @@ void DeferredApplication::onInit()
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
 
+	const char* spassTextureNames[] = { "ShadowsMap" };
+	const unsigned spassDepths[] = { GL_DEPTH_COMPONENT };
+	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, spassTextureNames, spassDepths);
+
 	// Load any other textures and geometry we want to use
-	a.loadFBX("Soulspear", "../rsc/models/soulspear/soulspear.fbx");
+	a.loadFBX("Soulspear",	"../rsc/models/soulspear/soulspear.fbx");
+	a.loadTexture("Quad",	"../rsc/textures/uv.png");
 
 
 }
@@ -58,8 +65,10 @@ void DeferredApplication::onPlay()
 	m_camera    = new FlyCamera;
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
+	m_floor		= new Geometry;
 
 	m_camera->lookAt(glm::vec3(1,2,-3), glm::vec3(0,.55f,0), glm::vec3(0, 1, 0));
+	//m_camera->lookAt()
 
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
@@ -73,13 +82,21 @@ void DeferredApplication::onPlay()
 	
 	//Directional Light
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, 0, .25f));
+	m_light->direction = glm::normalize(glm::vec3(.5f, 0, .75f));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
+	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
+	m_light->view = glm::lookAt(m_light->direction, glm::vec3(0), glm::vec3(0, 1, 0));
+
+	m_floor->mesh = "Quad";
+	m_floor->tris = "Quad";
+	m_floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+	m_floor->diffuse = "Quad";
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
+	m_shadowPass			= new SPass ("ShadowCreationPass", "ShadowPass");
 }
 
 void DeferredApplication::onStep()
@@ -92,8 +109,16 @@ void DeferredApplication::onStep()
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
+	m_geometryPass->draw(*m_camera, *m_floor);
 	m_geometryPass->post();
 
+	//Shadow Pass
+	m_shadowPass->prep();
+	m_shadowPass->draw(*m_light, *m_soulspear);
+	m_shadowPass->draw(*m_light, *m_floor);
+	m_geometryPass->post();
+
+	//Light Pass
 	m_directionalLightPass->prep();
 	m_directionalLightPass->draw(*m_camera, *m_light);
 	m_directionalLightPass->post();
@@ -112,4 +137,5 @@ void DeferredApplication::onTerm()
 	delete m_compositePass;
 	delete m_geometryPass;
 	delete m_directionalLightPass;
+	delete m_shadowPass;
 }

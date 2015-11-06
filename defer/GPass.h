@@ -16,6 +16,7 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		//glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 
 #ifdef _DEBUG
 		GLenum status = glGetError();
@@ -57,6 +58,7 @@ public:
 		//glDepthMask(GL_FALSE);
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_CULL_FACE);
 		//glUseProgram(0);
 	}
 

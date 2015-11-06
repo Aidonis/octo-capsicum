@@ -20,7 +20,7 @@ public:
 		//
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.33f, 0.f, 0.33f, 1.f);
+		glClearColor(0.33f, 0.33f, 0.33f, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(*shader);

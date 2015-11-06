@@ -7,7 +7,23 @@ struct LightD
 	float ambientIntensity = 1;
 	glm::vec3 direction = vec3(0, 1, 0);
 	float diffuseIntensity = 1;
+	glm::mat4 projection;
+	glm::mat4 view;
+
 	void update() {}
+
+	glm::mat4 lightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
+	
+	/*glm::mat4 getView() const{
+		glm::mat4 lightView = glm::lookAt(direction, glm::vec3(0), glm::vec3(0, 1, 0));
+		return lightView;
+	}
+	
+	glm::mat4 getLightMatrix() const {
+		glm::mat4 lightMatrix = lightProjection * getView();
+		return lightMatrix;
+	}*/
+
 };
 
 struct LightP

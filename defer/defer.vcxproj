@@ -141,6 +141,7 @@
     <ClInclude Include="CPass.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LPassD.h" />
+    <ClInclude Include="SCPass.h" />
     <ClInclude Include="SPass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
