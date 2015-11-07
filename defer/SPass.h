@@ -4,9 +4,8 @@
 #include "Geometry.h"
 
 //Shadow Pass
-class SPass : public nsfw::RenderPass{
-	
-	//nsfw::Asset<nsfw::ASSET::TEXTURE> shadows, shadowmap;
+class SPass : public nsfw::RenderPass
+{
 
 public:
 	SPass(const char* shaderName, const char* fboName) : RenderPass(shaderName, fboName){}
@@ -14,7 +13,6 @@ public:
 	void prep(){
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glEnable(GL_DEPTH_TEST);
-
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);

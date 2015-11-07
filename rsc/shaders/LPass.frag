@@ -21,7 +21,7 @@ uniform float specPower;
 
 uniform vec3 ambient;
 
-uniform sampler2D positionTexture;
+uniform sampler2D positionTexture;//view space
 uniform sampler2D normalTexture;
 
 uniform mat4 textureSpaceOffset;
@@ -31,7 +31,7 @@ void main()
 {
 
     vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
-    vec3 position = texture(positionTexture, vTexCoord).xyz;
+    vec3 position = texture(positionTexture, vTexCoord).xyz;//view space
 
     //Shadows
     mat4 lightViewProjection = textureSpaceOffset * directional.projection * directional.view;
@@ -39,16 +39,13 @@ void main()
 
     //compute diffuse
     vec3 lightDirection = directional.direction;
-    float d = max(dot(normal, -lightDirection), 0); //lamb
+    float d = max(dot(normal, lightDirection), 0); //lambertian
     
     //shade
     if(texture(shadowMap, shadowCoord.xy).r < shadowCoord.z){
         d = 0;
-    }
-    d = texture(shadowMap, shadowCoord.xy).r;
-
-    
-
+    } 
+	//d = texture(shadowMap, shadowCoord.xy).r;
 
     //compute specular lighting
     vec3 camViewPosition = (cameraView * vec4(cameraPosition, 1)).xyz;

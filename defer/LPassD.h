@@ -6,7 +6,7 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> normal, position, specular, shadowmap;
-	glm::vec3 ambientLight = glm::vec3(0, 0, .25f);
+	glm::vec3 ambientLight = glm::vec3(.25f, .25f, .25f);
 	float specPower = 128;
 
 public:
@@ -14,8 +14,8 @@ public:
 
 	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), specular("GPassSpecular"), shadowmap("ShadowMap") {}
 
-	void prep(){
-		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc...");
+	void prep()
+	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -23,34 +23,18 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-
 		glUseProgram(*shader);
 
-#ifdef _DEBUG
-		GLenum status = glGetError();
-		if (status != GL_NO_ERROR)
-		{
-			std::cerr << "A error occurred while prepping a render pass." << std::endl;
-
-			std::cerr << (status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: An invalid FBO name was provided." :
-				"An unknown error occurred.";
-
-			assert(false && "Check std::cerr for more information.");
-		}
-#endif
-
-
-
 	}
-	void post(){
-		//TODO_D("Unset any gl settings");
+	void post()
+	{
 		glDisable(GL_BLEND);
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 
-	void draw(const Camera &c, const LightD &l)
+	void draw(Camera &c, const LightD &l)
 	{
 		glm::mat4 textureSpaceOffset(
 			0.5f, 0.0f, 0.0f, 0.0f,
@@ -69,8 +53,8 @@ public:
 		//setUniform("Position", nsfw::UNIFORM::TEX2, &position, 1);
 
 		//Camera
-		setUniform("cameraPosition", nsfw::UNIFORM::FLO3, glm::value_ptr(c.transform[3]));
-		setUniform("cameraView", nsfw::UNIFORM::MAT4, glm::value_ptr(c.getView()));
+		setUniform("cameraPosition", nsfw::UNIFORM::FLO3, glm::value_ptr(c.GetPosition()));
+		setUniform("cameraView", nsfw::UNIFORM::MAT4, glm::value_ptr(c.GetView()));
 
 		//
 		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);

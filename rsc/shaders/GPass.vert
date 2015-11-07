@@ -16,8 +16,8 @@ uniform mat4 Model;
 
 void main()
 {
-	vPosition = View * Position;
-	vNormal   = normalize(View * Normal);
+	vPosition = View * Model *Position;
+	vNormal   = normalize(View * Model * Normal);
     vTexCoord = TexCoord;
 	
     gl_Position = Projection * View * Model * Position;

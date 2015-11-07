@@ -130,7 +130,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FlyCamera.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,10 +140,21 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPass.h" />
     <ClInclude Include="CPass.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LPassD.h" />
     <ClInclude Include="SCPass.h" />
     <ClInclude Include="SPass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\rsc\shaders\CPass.frag" />
+    <None Include="..\rsc\shaders\CPass.vert" />
+    <None Include="..\rsc\shaders\GPass.frag" />
+    <None Include="..\rsc\shaders\GPass.vert" />
+    <None Include="..\rsc\shaders\LPass.frag" />
+    <None Include="..\rsc\shaders\LPass.vert" />
+    <None Include="..\rsc\shaders\SPass.frag" />
+    <None Include="..\rsc\shaders\SPass.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

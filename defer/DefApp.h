@@ -17,6 +17,7 @@ class DeferredApplication : public nsfw::Application
 {
 	Camera   *m_camera;
 	Geometry *m_soulspear;
+	Geometry *m_soulspear2;
 	Geometry *m_floor;
 	LightD	 *m_light;
 
@@ -31,4 +32,5 @@ public:
 	void onStep();
 	void onTerm();
 	void onPlay();
+	void UpdateFlyCamControls(float deltaTime, float moveSpeed);
 };

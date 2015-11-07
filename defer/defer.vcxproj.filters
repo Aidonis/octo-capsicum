@@ -19,12 +19,18 @@
     <Filter Include="Header Files\Objects">
       <UniqueIdentifier>{68e26eeb-b2f2-4190-a60c-0f6e40daaa90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{6292ff1e-8cbd-476d-9259-867d06a2fa5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FlyCamera.cpp">
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,5 +62,34 @@
     <ClInclude Include="SCPass.h">
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\rsc\shaders\CPass.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\CPass.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\GPass.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\GPass.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\LPass.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\LPass.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\SPass.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\rsc\shaders\SPass.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
