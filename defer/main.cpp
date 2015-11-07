@@ -32,22 +32,21 @@ void DeferredApplication::onInit()
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "../rsc/shaders/GPass.vert", "../rsc/shaders/GPass.frag");
 	a.loadShader("LightPassDirectional", "../rsc/shaders/LPass.vert", "../rsc/shaders/LPass.frag");
-	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "../rsc/shaders/CPass.vert", "../rsc/shaders/CPass.frag");
 	a.loadShader("ShadowMapPass", "../rsc/shaders/SPass.vert", "../rsc/shaders/SPass.frag");
 
-	//a.loadTexture("soulspear_diffuse.tga", "../rsc/models/soulspear/soulspear_diffuse.tga");
-	//a.loadTexture("soulspear_normal.tga", "../rsc/models/soulspear/soulspear_normal.tga");
-
 	// Setup FBOs
+	//GeoPass
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
 	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
+	//LightPass
 	const char *lpassTextureNames[] = { "LPassColor" };
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
 
+	//ShadowPass
 	const char* spassTextureNames[] = { "ShadowMap" };
 	const unsigned spassDepths[] = { GL_DEPTH_COMPONENT };
 	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, spassTextureNames, spassDepths);
@@ -67,7 +66,7 @@ void DeferredApplication::onPlay()
 	m_soulspear = new Geometry;
 	m_floor		= new Geometry;
 
-	m_camera->lookAt(glm::vec3(1,2,-3), glm::vec3(0,.55f,0), glm::vec3(0, 1, 0));
+	m_camera->lookAt(glm::vec3(0,2,10), glm::vec3(0,2,0), glm::vec3(0, 1, 0));
 	//m_camera->lookAt()
 
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
@@ -82,7 +81,7 @@ void DeferredApplication::onPlay()
 	
 	//Directional Light
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, .5f, .75f));
+	m_light->direction = glm::normalize(glm::vec3(0.f, .5f, 1));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
@@ -91,7 +90,7 @@ void DeferredApplication::onPlay()
 
 	m_floor->mesh = "Quad";
 	m_floor->tris = "Quad";
-	m_floor->transform = glm::translate(glm::vec3(0, -1, 0)) * glm::rotate(-90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+	m_floor->transform = glm::translate(glm::vec3(0, -1, 0)) * glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
 	m_floor->diffuse = "Quad";
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");

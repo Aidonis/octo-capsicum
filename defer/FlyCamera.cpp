@@ -11,7 +11,7 @@
 
 void FlyCamera::update()
 {
-	std::cout << glm::to_string(transform[3]) << std::endl;
+	//std::cout << glm::to_string(transform[3]) << std::endl;
 
 	speed = 5;
 	GLFWwindow *window = glfwGetCurrentContext();

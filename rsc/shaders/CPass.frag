@@ -13,13 +13,9 @@ uniform sampler2D Normal;
 
 void main()
 {
-    vec3 albedoColor = texture( Albedo, vTexCoord ).rgb;
-    vec3 positionColor = texture( Position, vTexCoord ).rgb;
-    vec3 normalColor = texture( Normal, vTexCoord ).rgb;
-    vec3 lightColor = texture( Light, vTexCoord ).rgb;
+    vec3 albedoColor = texture(Albedo, vTexCoord ).rgb;
+    vec3 lightColor = texture(Light, vTexCoord).rgb;
     
 
     FragColor = vec4(albedoColor * lightColor, 1);
-    //FragColor = vec4(1);
-
 }

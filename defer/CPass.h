@@ -6,13 +6,12 @@
 
 class CPass : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> albedo, position, normal, depth, light;
+	nsfw::Asset<nsfw::ASSET::TEXTURE> albedo, light;
 
 public:
 											
 	CPass(const char *shaderName, const char *fboName) 
-	: RenderPass(shaderName, fboName), albedo("GPassAlbedo"), position("GPassPosition"), // NAMES ARE FROM ASSET LIBRARY!
-	normal("GPassNormal"),depth("GPassDepth"), light("LPassColor"){}
+	: RenderPass(shaderName, fboName), albedo("GPassAlbedo"), light("LPassColor"){}
 
 
 	void prep(){
@@ -20,7 +19,7 @@ public:
 		//
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.33f, 0.33f, 0.33f, 0);
+		glClearColor(0.35f, 0.35f, 0.35f, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(*shader);
@@ -42,6 +41,7 @@ public:
 		//TODO_D("Unset any gl settings");
 		//
 		glUseProgram(0);
+		glBindVertexArray(0);
 	}
 
 
@@ -51,13 +51,6 @@ public:
 		setUniform("Albedo", nsfw::UNIFORM::TEX2, albedo, 0);
 		setUniform("Light", nsfw::UNIFORM::TEX2, light, 1);
 		
-#ifdef _DEBUG
-		setUniform("Position",	nsfw::UNIFORM::TEX2, &position, 2);
-		setUniform("Normal",	nsfw::UNIFORM::TEX2, &normal,   3);
-		//setUniform("Depth",		nsfw::UNIFORM::TEX2, &depth,    3);
-#endif
-		//setUniform("TexelScalar", nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
-
 		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
 		unsigned quadNumtris   = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
 

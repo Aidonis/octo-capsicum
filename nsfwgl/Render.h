@@ -19,7 +19,7 @@ namespace nsfw
 	// Add whatever types you want!
 	namespace UNIFORM
 	{
-		enum TYPE { eNONE, FLO1, FLO3, FLO4, MAT4, INT1, TEX2, eSIZE };
+		enum TYPE { eNONE, FLO1, FLO3, FLO4, MAT4, INT1, TEX2, eSIZE, BOOL };
 	}
 
 	class RenderPass

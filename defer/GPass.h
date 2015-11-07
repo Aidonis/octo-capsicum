@@ -16,7 +16,7 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		//glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 
 #ifdef _DEBUG
 		GLenum status = glGetError();
@@ -71,9 +71,18 @@ public:
 		setUniform("View",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
 		setUniform("Model",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
-		setUniform("DiffuseMap",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
+		setUniform("DiffuseTexture",	nsfw::UNIFORM::TEX2, g.diffuse,  0);
 		setUniform("NormalMap",		nsfw::UNIFORM::TEX2, g.normal, 1);
 		setUniform("Specular",		nsfw::UNIFORM::TEX2, g.specular, 2);
+
+		//HACKHACK
+		bool usingTexture = false;
+		if(g.diffuse.name != ""){
+			setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+			usingTexture = true;
+		}
+
+		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
 		
 		glBindVertexArray(*g.mesh);
 		//unsigned ind_count = nsfw::Assets::instance().get(g.tris);

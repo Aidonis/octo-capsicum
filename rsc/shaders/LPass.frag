@@ -33,22 +33,20 @@ void main()
     vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
     vec3 position = texture(positionTexture, vTexCoord).xyz;
 
+    //compute diffuse
+    vec3 lightDirection = directional.direction;
+    float d = max(dot(normal, lightDirection), 0); //lamb
+    
     //Shadows
     mat4 lightViewProjection = textureSpaceOffset * directional.projection * directional.view;
     vec4 shadowCoord = lightViewProjection * inverse(cameraView) * vec4(position, 1);
 
-    //compute diffuse
-    vec3 lightDirection = directional.direction;
-    float d = max(dot(normal, -lightDirection), 0); //lamb
-    
     //shade
+    d = texture(shadowMap, shadowCoord.xy).r;
     if(texture(shadowMap, shadowCoord.xy).r < shadowCoord.z){
         d = 0;
     }
-    d = texture(shadowMap, shadowCoord.xy).r;
-
     
-
 
     //compute specular lighting
     vec3 camViewPosition = (cameraView * vec4(cameraPosition, 1)).xyz;
@@ -57,7 +55,4 @@ void main()
     float s = pow(max(dot(E,R), 0), specPower);
 
     LightOutput = ambient + (directional.color * d) + (directional.color * s);
-
-
-
 }

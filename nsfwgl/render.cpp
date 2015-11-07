@@ -20,6 +20,10 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 		glUniform4fv(location, 1, (GLfloat*)value);
 		break;
 
+	case nsfw::UNIFORM::BOOL:
+		glUniform1i(location, *(bool*)value);
+		break;
+
 	case nsfw::UNIFORM::MAT4: //TODO_D("Setup mat4 uniform!");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (const GLfloat*)value);
 		break;
