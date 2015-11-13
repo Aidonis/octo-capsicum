@@ -7,7 +7,7 @@ class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> normal, position, specular, shadowmap;
 	glm::vec3 ambientLight = glm::vec3(.25f, .25f, .25f);
-	float specPower = 128;
+	float specPower = 30;
 
 public:
 
@@ -60,10 +60,10 @@ public:
 			);
 
 		//Light
-		setUniform("directional.direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("directional.color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("directional.projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(l.lightProjection));
-		setUniform("directional.view", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(l.view));
+		setUniform("direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
+		setUniform("color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(l.getProjection()));
+		setUniform("view", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(l.getView()));
 
 		//setUniform("Normal", nsfw::UNIFORM::TEX2, &normal, 0);
 		//setUniform("Position", nsfw::UNIFORM::TEX2, &position, 1);

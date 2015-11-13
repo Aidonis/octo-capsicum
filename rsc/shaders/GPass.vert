@@ -16,10 +16,10 @@ uniform mat4 Model;
 
 void main()
 {
-	
-	vNormal   = normalize(View * Model * Normal);
 
 	vPosition = View * Model * Position;
+
+	vNormal   = normalize(View * Model * Normal);
 	
     vTexCoord = TexCoord;
 	

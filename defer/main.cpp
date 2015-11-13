@@ -16,7 +16,7 @@ int main()
 {
 	DeferredApplication d;
 
-	d.init();
+	d.init(800, 600);
 	d.play();
 	d.term();
 
@@ -49,7 +49,7 @@ void DeferredApplication::onInit()
 	//ShadowPass
 	const char* spassTextureNames[] = { "ShadowMap" };
 	const unsigned spassDepths[] = { GL_DEPTH_COMPONENT };
-	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, spassTextureNames, spassDepths);
+	a.makeFBO("ShadowPass", 16000, 16000, 1, spassTextureNames, spassDepths);
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear",	"../rsc/models/soulspear/soulspear.fbx");
@@ -64,11 +64,13 @@ void DeferredApplication::onPlay()
 	m_camera    = new FlyCamera;
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
+	m_soulspear2 = new Geometry;
 	m_floor		= new Geometry;
 
 	m_camera->lookAt(glm::vec3(0,2,10), glm::vec3(0,2,0), glm::vec3(0, 1, 0));
 	//m_camera->lookAt()
 
+	//Spear 1
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse   = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
@@ -77,30 +79,48 @@ void DeferredApplication::onPlay()
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 
+	//Spear 2
+	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	m_soulspear2->normal = "soulspear_normal.tga";		// These handle names may not be what your loadFBX sets 
+	m_soulspear2->specular = "soulspear_specular.tga";	// them as! (Assets will report what the key names are though)
+	m_soulspear2->specPower = 40.0f;
+	m_soulspear2->transform = translate(-5, 0, 0);
+
 	//TODO_D("Initialize our render passes!");
 	
 	//Directional Light
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0.f, .5f, 1));
+	m_light->direction = glm::normalize(glm::vec3(-.5f, .5f, 1));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
-	m_light->projection = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
-	m_light->view = glm::lookAt(m_light->direction, glm::vec3(0), glm::vec3(0, 1, 0));
-
 	m_floor->mesh = "Quad";
 	m_floor->tris = "Quad";
-	m_floor->transform = glm::translate(glm::vec3(0, -1, 0)) * glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
-	m_floor->diffuse = "Quad";
+	m_floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+	m_floor->diffuse = "";
+	m_floor->specPower = 0.0f;
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 	m_shadowPass			= new SPass ("ShadowMapPass", "ShadowPass");
+
+	//glViewport(0, 0, 800, 600);
+
+
+
+
+	glViewport(0, 0, 800, 600);
 }
 
 void DeferredApplication::onStep()
 {
+
+	float time = nsfw::Window::instance().getTime();
+
+	m_soulspear->transform = glm::rotate(time * 100, glm::vec3(0.f, 1.f, 0.f));
 	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
 	m_light->update();
 	m_camera->update();
@@ -109,14 +129,16 @@ void DeferredApplication::onStep()
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
+	m_geometryPass->draw(*m_camera, *m_soulspear2);
 	m_geometryPass->draw(*m_camera, *m_floor);
 	m_geometryPass->post();
 
 	//Shadow Pass
 	m_shadowPass->prep();
 	m_shadowPass->draw(*m_light, *m_soulspear);
+	m_shadowPass->draw(*m_light, *m_soulspear2);
 	m_shadowPass->draw(*m_light, *m_floor);
-	m_geometryPass->post();
+	m_shadowPass->post();
 
 	//Light Pass
 	m_directionalLightPass->prep();
@@ -133,6 +155,7 @@ void DeferredApplication::onTerm()
 	delete m_camera;
 	delete m_light;
 	delete m_soulspear;
+	delete m_soulspear2;
 
 	delete m_compositePass;
 	delete m_geometryPass;

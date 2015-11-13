@@ -5,16 +5,15 @@ struct LightD
 {
 	glm::vec3 color = vec3(1);
 	glm::vec3 direction = vec3(0, 1, 0);
-	glm::mat4 projection;
-	glm::mat4 view;
 
 	float ambientIntensity = 1;
 	float diffuseIntensity = 1;
 
 	void update() {}
-
-	glm::mat4 lightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
 	
+	glm::mat4 getProjection() const { return glm::ortho<float>(-20, 20, -20, 20, -20, 20);	}
+	glm::mat4 getView()		  const { return glm::lookAt(direction, vec3(0), vec3(0, 1, 0));	}
+
 };
 
 struct LightP

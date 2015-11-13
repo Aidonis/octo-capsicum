@@ -18,38 +18,11 @@ public:
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_CULL_FACE);
 
-#ifdef _DEBUG
-		GLenum status = glGetError();
-		if (status != GL_NO_ERROR)
-		{
-			std::cerr << "A error occurred while prepping a render pass." << std::endl;
-
-			std::cerr << (status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: An invalid FBO name was provided." :
-				"An unknown error occurred.";
-
-			assert(false && "Check stderr for more information.");
-		}
-#endif
-
 		//
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);
 
-
-#ifdef _DEBUG
-		status = glGetError();
-		if (status != GL_NO_ERROR)
-		{
-			std::cerr << "A error occurred while prepping a render pass." << std::endl;
-
-			std::cerr << (status == GL_INVALID_VALUE) ? "GL_INVALID_VALUE :: An invalid shader name was provided." :
-				(status == GL_INVALID_OPERATION) ? "GL_INVALID_OPERATION :: The shader could not be bound, if valid." :
-				"An unknown error occurred.";
-
-			assert(false && "Check stderr for more information.");
-		}
-#endif
 	}
 	void post(){
 		//TODO_D("Unset any gl settings");
