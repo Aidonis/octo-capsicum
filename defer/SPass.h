@@ -14,7 +14,7 @@ public:
 	void prep(){
 		
 		
-		glViewport(0, 0, 16000, 16000);
+		glViewport(0, 0, 2048, 2048);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glUseProgram(*shader);

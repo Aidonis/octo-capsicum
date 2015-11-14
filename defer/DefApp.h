@@ -6,6 +6,7 @@
 struct Camera;
 struct Geometry;
 struct LightD;
+class ParticleBatch;
 
 class GPass;
 class LPassD;
@@ -18,6 +19,10 @@ class DeferredApplication : public nsfw::Application
 	Camera   *m_camera;
 	Geometry *m_soulspear;
 	Geometry *m_soulspear2;
+	
+	Geometry *m_cube;
+	ParticleBatch *m_particles;
+
 	Geometry *m_floor;
 	LightD	 *m_light;
 

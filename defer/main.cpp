@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include "Light.h"
 #include "Camera.h"
+#include "Particles.h"
 
 #include "GPass.h"
 #include "CPass.h"
@@ -49,7 +50,7 @@ void DeferredApplication::onInit()
 	//ShadowPass
 	const char* spassTextureNames[] = { "ShadowMap" };
 	const unsigned spassDepths[] = { GL_DEPTH_COMPONENT };
-	a.makeFBO("ShadowPass", 16000, 16000, 1, spassTextureNames, spassDepths);
+	a.makeFBO("ShadowPass", 2048, 2048, 1, spassTextureNames, spassDepths);
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear",	"../rsc/models/soulspear/soulspear.fbx");
@@ -61,11 +62,12 @@ void DeferredApplication::onInit()
 void DeferredApplication::onPlay()
 {
 	//TODO_D("Initialize our scene objects!");
-	m_camera    = new FlyCamera;
-	m_light     = new LightD;
-	m_soulspear = new Geometry;
-	m_soulspear2 = new Geometry;
-	m_floor		= new Geometry;
+	m_camera		= new FlyCamera;
+	m_light			= new LightD;
+	m_soulspear		= new Geometry;
+	m_soulspear2	= new Geometry;
+	m_floor			= new Geometry;
+	m_cube			= new Geometry;
 
 	m_camera->lookAt(glm::vec3(0,2,10), glm::vec3(0,2,0), glm::vec3(0, 1, 0));
 	//m_camera->lookAt()
@@ -88,6 +90,16 @@ void DeferredApplication::onPlay()
 	m_soulspear2->specPower = 40.0f;
 	m_soulspear2->transform = translate(-5, 0, 0);
 
+	//Cube
+	m_cube->mesh = "Cube";
+	m_cube->tris = "Cube";
+	m_cube->diffuse = "";
+	m_cube->specPower = 0.0f;
+	m_cube->transform = translate(5, 3, 0);
+
+	//Cube particles
+	m_particles->init(10, .1f, *m_cube);
+
 	//TODO_D("Initialize our render passes!");
 	
 	//Directional Light
@@ -96,23 +108,18 @@ void DeferredApplication::onPlay()
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
+	//Floor-Quad
 	m_floor->mesh = "Quad";
 	m_floor->tris = "Quad";
 	m_floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
 	m_floor->diffuse = "";
 	m_floor->specPower = 0.0f;
 
+	//Passes
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 	m_shadowPass			= new SPass ("ShadowMapPass", "ShadowPass");
-
-	//glViewport(0, 0, 800, 600);
-
-
-
-
-	glViewport(0, 0, 800, 600);
 }
 
 void DeferredApplication::onStep()
@@ -130,6 +137,8 @@ void DeferredApplication::onStep()
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->draw(*m_camera, *m_soulspear2);
+	m_geometryPass->draw(*m_camera, *m_cube);
+	//m_geometryPass->draw(*m_camera, *m_cubes);
 	m_geometryPass->draw(*m_camera, *m_floor);
 	m_geometryPass->post();
 
@@ -137,6 +146,7 @@ void DeferredApplication::onStep()
 	m_shadowPass->prep();
 	m_shadowPass->draw(*m_light, *m_soulspear);
 	m_shadowPass->draw(*m_light, *m_soulspear2);
+	m_shadowPass->draw(*m_light, *m_cube);
 	m_shadowPass->draw(*m_light, *m_floor);
 	m_shadowPass->post();
 
