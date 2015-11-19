@@ -62,29 +62,33 @@ public:
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, nullptr);
 	}
 
-	void draw(const Camera &c, const ParticleBatch &pb) {
-		TODO_D("Build Draw for particle batch");
+	//void draw(const Camera &c, const ParticleBatch &pb) {
+	//	TODO_D("Build Draw for particle batch");
 
-		for (int i = 0; i < pb.m_maxParticles; i++) {
-			setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
-			setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
-			setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(pb.m_model->transform));
+	//	for (int i = 0; i < pb.m_maxParticles; i++) {
 
-			setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.m_model->diffuse, 0);
-			setUniform("NormalMap", nsfw::UNIFORM::TEX2, pb.m_model->normal, 1);
-			setUniform("Specular", nsfw::UNIFORM::TEX2, pb.m_model->specular, 2);
+	//		//pb.m_model->transform = glm::scale(pb.m_model->transform, 0.5f, .5f, .5f);
+	//		//pb.m_model->transform *= glm::translate(0.f, i * 1.0f, 0.f) * glm::scale(0.5f, 0.5f, 0.5f);
 
-			//Hack
-			bool usingTexture = false;
-			if (g.diffuse.name != "") {
-				setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, g.diffuse, 0);
-				usingTexture = true;
-			}
+	//		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
+	//		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
+	//		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(pb.m_model->transform));
 
-			setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+	//		setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.m_model->diffuse, 0);
+	//		setUniform("NormalMap", nsfw::UNIFORM::TEX2, pb.m_model->normal, 1);
+	//		setUniform("Specular", nsfw::UNIFORM::TEX2, pb.m_model->specular, 2);
 
-			glBindVertexArray(*pb.m_model->mesh);
-			glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
-		}
-	}
+	//		//Hack
+	//		bool usingTexture = false;
+	//		//if (pb.diffuse.name != "") {
+	//		//	setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.diffuse, 0);
+	//		//	usingTexture = true;
+	//		//}
+
+	//		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+
+	//		glBindVertexArray(*pb.m_model->mesh);
+	//		glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
+	//	}
+	//}
 };

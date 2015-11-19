@@ -21,7 +21,7 @@ class DeferredApplication : public nsfw::Application
 	Geometry *m_soulspear2;
 	
 	Geometry *m_cube;
-	ParticleBatch *m_particles;
+	ParticleBatch *m_particleBatch;
 
 	Geometry *m_floor;
 	LightD	 *m_light;

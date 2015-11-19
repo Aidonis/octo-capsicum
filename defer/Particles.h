@@ -1,18 +1,15 @@
 #pragma once
 
 #include <glm\glm.hpp>
-#include "../nsfwgl/Window.h"
+#include "GPass.h"
 #include "Geometry.h"
 
-auto &w = nsfw::Window::instance();
 
 class Particle {
 public:
 	friend class ParticleBatch;
 
-	void update() {
-		m_position += m_velocity * w.getDeltaTime();
-	}
+	void update(float deltaTime);
 
 private:
 	glm::vec2	m_position = glm::vec2(0.0f);
@@ -28,35 +25,13 @@ class ParticleBatch{
 public:
 	ParticleBatch();
 	
-	~ParticleBatch() {
-		delete[] m_particles;
-	}
+	~ParticleBatch();
 
-	void init(	int maxParticles,
-				float decayRate,
-				Geometry model){
-		m_maxParticles = maxParticles;
-		m_particles = new Particle[maxParticles];
-		m_decayRate = decayRate;
+	void init(int maxParticles, float decayRate, Geometry model);
 
-		m_model = new Geometry(model);
-	}
+	void Update(float deltaTime);
 
-	void Update() {
-		for (int i = 0; i < m_maxParticles; i++) {
-			if (m_particles[i].m_lifetime > 0.0f) {
-				m_particles[i].update();
-				m_particles[i].m_lifetime -= m_decayRate * w.getDeltaTime();
-			}
-		}
-	}
-
-	void Draw() {
-		for (int i = 0; i < m_maxParticles; i++) {
-			if (m_particles[i].m_lifetime > 0.0f) {
-			}
-		}
-	}
+	void Draw();
 
 	void addParticle(	const glm::vec2& position, 
 						const glm::vec2& velocity);
@@ -65,9 +40,13 @@ public:
 						const glm::vec2& velocity,
 						const glm::vec4& color);
 
+	int findFreeParticle();
+
 	float		m_decayRate;
-	Particle*	m_particles = nullptr;
 	int			m_maxParticles = 0;
+	int			m_lastFreeParticle = 0;
+
+	Particle*	m_particles = nullptr;
 	Geometry*	m_model = nullptr;
 
 private:
