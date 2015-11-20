@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm\glm.hpp>
-#include "GPass.h"
+#include <glm/ext.hpp>
 #include "Geometry.h"
 
 
@@ -11,13 +11,15 @@ public:
 
 	void update(float deltaTime);
 
-private:
-	glm::vec2	m_position = glm::vec2(0.0f);
-	glm::vec2	m_velocity = glm::vec2(0.0f);
-	glm::vec4	m_color = glm::vec4(1, 1, 1, 1);
-	
-	float	m_width = 0.0f;
 	float	m_lifetime = 0.0f; // if > 0 isActive
+
+
+	glm::mat4	m_transform = glm::mat4(1);
+
+	glm::vec3	m_position = glm::vec3(0.0f);
+	glm::vec3	m_velocity = glm::vec3(0.0f);
+	glm::vec4	m_color = glm::vec4(1, 1, 1, 1);
+private:
 
 };
 
@@ -33,11 +35,11 @@ public:
 
 	void Draw();
 
-	void addParticle(	const glm::vec2& position, 
-						const glm::vec2& velocity);
+	void addParticle(	const glm::vec3& position, 
+						const glm::vec3& velocity);
 	
-	void addParticle(	const glm::vec2& position, 
-						const glm::vec2& velocity,
+	void addParticle(	const glm::vec3& position, 
+						const glm::vec3& velocity,
 						const glm::vec4& color);
 
 	int findFreeParticle();

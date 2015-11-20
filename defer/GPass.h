@@ -62,33 +62,45 @@ public:
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, nullptr);
 	}
 
-	//void draw(const Camera &c, const ParticleBatch &pb) {
-	//	TODO_D("Build Draw for particle batch");
+	void draw(const Camera &c, const ParticleBatch &pb) {
+		TODO_D("Build Draw for particle batch");
 
-	//	for (int i = 0; i < pb.m_maxParticles; i++) {
+		//Random between .01 - .1
+		srand(time(NULL));
+		float random = ((rand() % 20 + 1) - 10) / 100.f;
 
-	//		//pb.m_model->transform = glm::scale(pb.m_model->transform, 0.5f, .5f, .5f);
-	//		//pb.m_model->transform *= glm::translate(0.f, i * 1.0f, 0.f) * glm::scale(0.5f, 0.5f, 0.5f);
+		for (int i = 0; i < pb.m_maxParticles; i++) {
 
-	//		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
-	//		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
-	//		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(pb.m_model->transform));
+			auto& p = pb.m_particles[i];
 
-	//		setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.m_model->diffuse, 0);
-	//		setUniform("NormalMap", nsfw::UNIFORM::TEX2, pb.m_model->normal, 1);
-	//		setUniform("Specular", nsfw::UNIFORM::TEX2, pb.m_model->specular, 2);
+			if(p.m_lifetime > 0.0f){
 
-	//		//Hack
-	//		bool usingTexture = false;
-	//		//if (pb.diffuse.name != "") {
-	//		//	setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.diffuse, 0);
-	//		//	usingTexture = true;
-	//		//}
+				//pb.m_model->transform = glm::translate(pb.m_model->transform,  random, random, random);
+				//p.m_transform = glm::translate(pb.m_model->transform, random, random, random);
+				
 
-	//		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+				setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
+				setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
+				//setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(pb.m_model->transform));
+				setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(p.m_transform));
 
-	//		glBindVertexArray(*pb.m_model->mesh);
-	//		glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
-	//	}
-	//}
+				setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.m_model->diffuse, 0);
+				setUniform("NormalMap", nsfw::UNIFORM::TEX2, pb.m_model->normal, 1);
+				setUniform("Specular", nsfw::UNIFORM::TEX2, pb.m_model->specular, 2);
+
+				//Hack
+				bool usingTexture = false;
+				//if (pb.diffuse.name != "") {
+				//	setUniform("DiffuseTexture", nsfw::UNIFORM::TEX2, pb.diffuse, 0);
+				//	usingTexture = true;
+				//}
+
+				setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+
+				glBindVertexArray(*pb.m_model->mesh);
+				glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
+			}
+
+		}
+	}
 };

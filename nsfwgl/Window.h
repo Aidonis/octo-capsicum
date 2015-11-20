@@ -42,5 +42,6 @@ namespace nsfw
 		unsigned  getWidth()                 const;
 		unsigned  getHeight()                const;
 		glm::mat4 getTexelAdjustmentMatrix() const;
+		float	  getRandom()				 const;
 	};
 }

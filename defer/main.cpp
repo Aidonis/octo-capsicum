@@ -68,6 +68,7 @@ void DeferredApplication::onPlay()
 	m_soulspear2	= new Geometry;
 	m_floor			= new Geometry;
 	m_cube			= new Geometry;
+	m_cubes			= new Geometry;
 	m_particleBatch = new ParticleBatch;
 
 
@@ -99,9 +100,18 @@ void DeferredApplication::onPlay()
 	m_cube->specPower = 0.0f;
 	m_cube->transform = translate(5, 3, 0);
 
+	//Cubes
+	m_cubes->mesh = "Cube";
+	m_cubes->tris = "Cube";
+	m_cubes->diffuse = "";
+	m_cubes->specPower = 0.0f;
+	m_cubes->transform = translate(0, 2, 3);
+
 	//Cube particles
-	m_particleBatch->init(10, .1f, *m_cube);
-	
+	m_particleBatch->init(3, .1f, *m_cubes);
+	for (int i = 0; i < m_particleBatch->m_maxParticles; i ++){
+		m_particleBatch->addParticle(glm::vec3(0, 2, 0), glm::vec3(1, 0, 0));
+	}
 
 	//TODO_D("Initialize our render passes!");
 	
@@ -127,7 +137,6 @@ void DeferredApplication::onPlay()
 
 void DeferredApplication::onStep()
 {
-
 	float time = nsfw::Window::instance().getTime();
 	float deltaTime = nsfw::Window::instance().getDeltaTime();
 
@@ -142,10 +151,9 @@ void DeferredApplication::onStep()
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->draw(*m_camera, *m_soulspear2);
-	//m_geometryPass->draw(*m_camera, *m_cube);
+	m_geometryPass->draw(*m_camera, *m_cube);
 
 	m_geometryPass->draw(*m_camera, *m_particleBatch);
-
 	//m_geometryPass->draw(*m_camera, *m_cubes);
 
 	m_geometryPass->draw(*m_camera, *m_floor);
