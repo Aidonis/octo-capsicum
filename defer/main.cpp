@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include "Light.h"
 #include "Camera.h"
+#include "GPUParticle.h"
 #include "Particles.h"
 
 #include "GPass.h"
@@ -35,6 +36,9 @@ void DeferredApplication::onInit()
 	a.loadShader("LightPassDirectional", "../rsc/shaders/LPass.vert", "../rsc/shaders/LPass.frag");
 	a.loadShader("CompPass", "../rsc/shaders/CPass.vert", "../rsc/shaders/CPass.frag");
 	a.loadShader("ShadowMapPass", "../rsc/shaders/SPass.vert", "../rsc/shaders/SPass.frag");
+	
+	//Working here
+	a.createGeoShader("GeometryShader", "../rsc/shaders/Particles.vert", "../rsc/shaders/Particles.frag", "../rsc/shaders/Particles.geom");
 
 	// Setup FBOs
 	//GeoPass
@@ -69,7 +73,8 @@ void DeferredApplication::onPlay()
 	m_floor			= new Geometry;
 	m_cube			= new Geometry;
 	m_cubes			= new Geometry;
-	m_particleBatch = new ParticleBatch;
+	m_particleEmitter = new GPUParticleEmitter;
+	//m_particleBatch = new ParticleBatch;
 
 
 	m_camera->lookAt(glm::vec3(0,2,10), glm::vec3(0,2,0), glm::vec3(0, 1, 0));
@@ -108,10 +113,13 @@ void DeferredApplication::onPlay()
 	m_cubes->transform = translate(0, 2, 3);
 
 	//Cube particles
-	m_particleBatch->init(3, .1f, *m_cubes);
-	for (int i = 0; i < m_particleBatch->m_maxParticles; i ++){
-		m_particleBatch->addParticle(glm::vec3(0, 2, 0), glm::vec3(1, 0, 0));
-	}
+	//m_particleBatch->init(3, .1f, *m_cubes);
+	//for (int i = 0; i < m_particleBatch->m_maxParticles; i ++){
+	//	m_particleBatch->addParticle(glm::vec3(0, 2, 0), glm::vec3(1, 0, 0));
+	//}
+
+	//GPU Particle
+	m_particleEmitter->init();
 
 	//TODO_D("Initialize our render passes!");
 	
@@ -145,7 +153,7 @@ void DeferredApplication::onStep()
 	m_light->update();
 	m_camera->update();
 	m_soulspear->update();
-	m_particleBatch->Update(deltaTime);
+	//m_particleBatch->Update(deltaTime);
 	
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
@@ -153,7 +161,7 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear2);
 	m_geometryPass->draw(*m_camera, *m_cube);
 
-	m_geometryPass->draw(*m_camera, *m_particleBatch);
+	//m_geometryPass->draw(*m_camera, *m_particleBatch);
 	//m_geometryPass->draw(*m_camera, *m_cubes);
 
 	m_geometryPass->draw(*m_camera, *m_floor);

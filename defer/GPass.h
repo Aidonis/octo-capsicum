@@ -103,4 +103,11 @@ public:
 
 		}
 	}
+
+	void Draw(const Camera &c, const ParticleBatch &pb) {
+
+
+		glBindVertexArray(*pb.m_model->mesh);
+		glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
+	}
 };

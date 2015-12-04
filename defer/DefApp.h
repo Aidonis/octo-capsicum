@@ -7,6 +7,7 @@ struct Camera;
 struct Geometry;
 struct LightD;
 class ParticleBatch;
+class GPUParticleEmitter;
 
 class GPass;
 class LPassD;
@@ -23,6 +24,7 @@ class DeferredApplication : public nsfw::Application
 	Geometry *m_cube;
 	Geometry *m_cubes;
 	ParticleBatch *m_particleBatch;
+	GPUParticleEmitter *m_particleEmitter;
 
 	Geometry *m_floor;
 	LightD	 *m_light;

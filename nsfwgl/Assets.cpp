@@ -51,6 +51,30 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HAN
 	return true;
 }
 
+bool nsfw::Assets::createGeoShader(const char* name, const char* vpath, const char* fpath, const char* gpath) {
+	ASSET_LOG(GL_HANDLE_TYPE::SHADER);
+
+	unsigned int vs = loadShaderFile(GL_VERTEX_SHADER, vpath);
+	unsigned int fs = loadShaderFile(GL_VERTEX_SHADER, fpath);
+	unsigned int gs = loadShaderFile(GL_VERTEX_SHADER, gpath);
+
+	GLuint drawShader = glCreateProgram();
+	glAttachShader(drawShader, vs);
+	glAttachShader(drawShader, fs);
+	glAttachShader(drawShader, gs);
+	glLinkProgram(drawShader);
+
+	//
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+	glDeleteShader(gs);
+
+	//
+	setINTERNAL(ASSET::GL_HANDLE_TYPE::SHADER, name, drawShader);
+
+	return true;
+}
+
 unsigned nsfw::Assets::loadShaderFile(unsigned shaderType, const char* path){
 	//Valid File Path
 #ifdef _DEBUG

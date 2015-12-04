@@ -28,7 +28,7 @@ void ParticleBatch::Update(float deltaTime){
 	for (int i = 0; i < m_maxParticles; i++) {
 		if (m_particles[i].m_lifetime > 0.0f) {
 			m_particles[i].update(deltaTime);
-			m_particles[i].m_lifetime -= m_decayRate * deltaTime * 10;
+			m_particles[i].m_lifetime -= m_decayRate * deltaTime * 5;
 		}
 	}
 }
@@ -46,7 +46,7 @@ void ParticleBatch::addParticle(const glm::vec3& position, const glm::vec3& velo
 
 	auto& p = m_particles[particleIndex];
 
-	p.m_transform = glm::translate(glm::mat4(1) ,0.f, 2.f, 3.f);
+	p.m_transform = glm::translate(glm::mat4(1) ,0.f, 4.f, 3.f);
 	p.m_lifetime = 1.0f;
 	p.m_position = position;
 	p.m_velocity = velocity;

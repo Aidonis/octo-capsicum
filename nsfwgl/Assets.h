@@ -131,6 +131,9 @@ namespace nsfw
 		// should load a shader from file
 		bool loadShader(const char *name, const char *vpath, const char *fpath);
 	
+		//
+		bool createGeoShader(const char* name, const char* vpath, const char* fpath, const char* gpath);
+
 		// should load from an FBX, adding assets to the library as they are discovered
 		bool loadFBX(const char *name, const char *path);
 

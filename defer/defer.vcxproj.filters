@@ -30,6 +30,9 @@
     <ClCompile Include="Particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GPUParticle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPass.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
     <ClInclude Include="Particles.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUParticle.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
