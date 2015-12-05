@@ -104,10 +104,11 @@ public:
 		}
 	}
 
-	void Draw(const Camera &c, const ParticleBatch &pb) {
+	void draw(const Camera &c, GPUParticleEmitter &gpe) {
+		float time = nsfw::Window::instance().getTime();
 
+		glm::mat4 projectionView = c.getProjection() * c.getView();
+		gpe.draw(time, c.transform, projectionView);
 
-		glBindVertexArray(*pb.m_model->mesh);
-		glDrawElements(GL_TRIANGLES, *pb.m_model->tris, GL_UNSIGNED_INT, nullptr);
 	}
 };

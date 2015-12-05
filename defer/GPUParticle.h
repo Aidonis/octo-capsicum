@@ -30,7 +30,9 @@ public:
 protected:
 	void createBuffers();
 	void createUpdateShader();
-	void createDrawShader();
+	void createDrawShader(const char* name, const char* vpath, const char* fpath, const char* gpath);
+
+	unsigned int loadShaderFile(unsigned int shaderType, const char* path);
 
 	GPUParticle* m_particles;
 	unsigned int m_maxParticles;

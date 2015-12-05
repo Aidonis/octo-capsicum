@@ -38,7 +38,7 @@ void DeferredApplication::onInit()
 	a.loadShader("ShadowMapPass", "../rsc/shaders/SPass.vert", "../rsc/shaders/SPass.frag");
 	
 	//Working here
-	a.createGeoShader("GeometryShader", "../rsc/shaders/Particles.vert", "../rsc/shaders/Particles.frag", "../rsc/shaders/Particles.geom");
+	//a.createGeoShader("GeometryShader", "../rsc/shaders/Particles.vert", "../rsc/shaders/Particles.frag", "../rsc/shaders/Particles.geom");
 
 	// Setup FBOs
 	//GeoPass
@@ -119,7 +119,8 @@ void DeferredApplication::onPlay()
 	//}
 
 	//GPU Particle
-	m_particleEmitter->init();
+	m_particleEmitter->init(100, 0.1f, 5.0f, 1, 10, 1, 0.1f,
+							glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 
 	//TODO_D("Initialize our render passes!");
 	
@@ -160,11 +161,13 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->draw(*m_camera, *m_soulspear2);
 	m_geometryPass->draw(*m_camera, *m_cube);
+	
 
 	//m_geometryPass->draw(*m_camera, *m_particleBatch);
 	//m_geometryPass->draw(*m_camera, *m_cubes);
 
 	m_geometryPass->draw(*m_camera, *m_floor);
+	m_geometryPass->draw(*m_camera, *m_particleEmitter);
 	m_geometryPass->post();
 
 	//Shadow Pass
