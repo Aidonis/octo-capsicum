@@ -25,7 +25,7 @@ public:
 		const glm::vec4& a_startColor,
 		const glm::vec4& a_endColor);
 
-	void draw(float time, const glm::mat4& a_cameraTransform, const glm::mat4& a_projectionView);
+	void draw(float time, const glm::mat4& a_cameraTransform, const glm::mat4& a_projection, const glm::mat4& a_view);
 
 protected:
 	void createBuffers();

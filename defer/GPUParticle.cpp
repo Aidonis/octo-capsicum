@@ -54,7 +54,7 @@ void GPUParticleEmitter::init(unsigned a_maxParticles,
 
 }
 
-void GPUParticleEmitter::draw(float time, const glm::mat4& a_cameraTransform, const glm::mat4& a_projectionView){
+void GPUParticleEmitter::draw(float time, const glm::mat4& a_cameraTransform, const glm::mat4& a_projection, const glm::mat4& a_view){
 	//update particles using transform
 	glUseProgram(m_updateShader);
 
@@ -94,8 +94,11 @@ void GPUParticleEmitter::draw(float time, const glm::mat4& a_cameraTransform, co
 	//draw using geo shader to billboard
 	glUseProgram(m_drawShader);
 
-	location = glGetUniformLocation(m_drawShader, "projectionView");
-	glUniformMatrix4fv(location, 1, false, &a_projectionView[0][0]);
+	location = glGetUniformLocation(m_drawShader, "view");
+	glUniformMatrix4fv(location, 1, false, &a_view[0][0]);
+
+	location = glGetUniformLocation(m_drawShader, "projection");
+	glUniformMatrix4fv(location, 1, false, &a_projection[0][0]);
 
 	location = glGetUniformLocation(m_drawShader, "cameraTransform");
 	glUniformMatrix4fv(location, 1, false, &a_cameraTransform[0][0]);

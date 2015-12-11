@@ -1,0 +1,24 @@
+Mini-Mort
+===========
+
+Goals:
+	Setup a basic framework in openGL to run deffered rendering. We were succesful in this endevor.
+
+Challanges:
+	Dealing with openGL as a whole.
+	Working within a templated framework with openGL
+
+Triumphs:
+	Actually having defered rendering working with multiple passes.
+	Particles are cool stuff.
+	Shadows work, but to hell with them.
+
+Things That Worked Well:
+	While a pain to get setup initially, running with the templated framework ended up working out pretty well. Even if there are improvements or criticisms behind the structure, working within it allowed for what I believe will be better understanding of working in the industry.
+
+
+Things That Did Not Work Well:
+	The framework can fall into this category as well as it was a bit of a jerk to get up and running. The duration of the project may be included here as well considering the start point.
+
+Going Forward:
+	I'd like to avoid openGL for some time. While it is some powerful tech I'd put it on the low end of my list of priorites unless I had a sudden craving to get into engine programming.

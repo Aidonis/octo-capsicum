@@ -2,6 +2,7 @@
 #include "../nsfwgl/nsfw.h"
 #include "Light.h"
 #include "Geometry.h"
+#include "GPUParticle.h"
 
 //Shadow Pass
 class SPass : public nsfw::RenderPass{
@@ -35,6 +36,12 @@ public:
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, nullptr);
+	}
+
+	void draw(const LightD &l, GPUParticleEmitter &gpe){
+		float time = nsfw::Window::instance().getTime();
+
+
 	}
 
 	void post(){

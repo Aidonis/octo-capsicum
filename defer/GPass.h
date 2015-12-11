@@ -107,8 +107,7 @@ public:
 	void draw(const Camera &c, GPUParticleEmitter &gpe) {
 		float time = nsfw::Window::instance().getTime();
 
-		glm::mat4 projectionView = c.getProjection() * c.getView();
-		gpe.draw(time, c.transform, projectionView);
+		gpe.draw(time, c.transform, c.getProjection(), c.getView());
 
 	}
 };

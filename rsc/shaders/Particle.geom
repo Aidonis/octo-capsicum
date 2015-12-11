@@ -11,8 +11,13 @@ in float lifespan[];
 
 //output to frag
 out vec4 Color;
+out vec4 Normal;
+out vec4 Position;
 
-uniform mat4 projectionView;
+
+uniform mat4 view;
+uniform mat4 projection;
+
 uniform mat4 cameraTransform;
 
 uniform float sizeStart;
@@ -22,6 +27,7 @@ uniform vec4 colorStart;
 uniform vec4 colorEnd;
 
 void main(){
+	mat4 projectionView = projection * view;
 	//interpolate color
 	Color = mix(colorStart, colorEnd, lifetime[0] / lifespan[0]);
 
@@ -40,16 +46,22 @@ void main(){
 	vec3 yAxis = cross(zAxis, xAxis);
 	mat3 billboard = mat3(xAxis, yAxis, zAxis);
 
+	Normal = view * vec4(zAxis,0);
+
 	//Emit
 	gl_Position = projectionView * vec4(billboard * corners[0] + position[0], 1);
+	Position = view * inverse(projectionView) * gl_Position;
 	EmitVertex();
 
 	gl_Position = projectionView * vec4(billboard * corners[1] + position[0], 1);
+	Position = view * inverse(projectionView) * gl_Position;
 	EmitVertex();
 
 	gl_Position = projectionView * vec4(billboard * corners[2] + position[0], 1);
+	Position = view * inverse(projectionView) * gl_Position;
 	EmitVertex();
 
 	gl_Position = projectionView * vec4(billboard * corners[3] + position[0], 1);
+	Position = view * inverse(projectionView) * gl_Position;
 	EmitVertex();
 }

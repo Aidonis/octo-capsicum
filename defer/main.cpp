@@ -119,8 +119,8 @@ void DeferredApplication::onPlay()
 	//}
 
 	//GPU Particle
-	m_particleEmitter->init(100, 0.1f, 5.0f, 1, 10, 1, 0.1f,
-							glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	m_particleEmitter->init(1000, 0.2f, 7.0f, 1, 15, 1, 0.1f,
+							glm::vec4(0.3f, 1, 0.2f, 1), glm::vec4(.5, 0.2f, 0.8f, 1));
 
 	//TODO_D("Initialize our render passes!");
 	
@@ -180,10 +180,9 @@ void DeferredApplication::onStep()
 	//Shadow Pass
 	m_shadowPass->prep();
 	if (shadowPass) {
-	m_shadowPass->draw(*m_light, *m_soulspear);
-	m_shadowPass->draw(*m_light, *m_soulspear2);
-	//m_shadowPass->draw(*m_light, *m_cube);
-	m_shadowPass->draw(*m_light, *m_floor);
+		m_shadowPass->draw(*m_light, *m_soulspear);
+		m_shadowPass->draw(*m_light, *m_soulspear2);
+		m_shadowPass->draw(*m_light, *m_floor);
 	}
 	m_shadowPass->post();
 	
