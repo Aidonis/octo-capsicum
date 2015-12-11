@@ -30,7 +30,7 @@ void nsfw::Window::init(unsigned width, unsigned height)
 	if (window == nullptr) {
 		glfwTerminate();
 	}
-	
+
 	glfwMakeContextCurrent(window);
 
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
@@ -97,13 +97,13 @@ float nsfw::Window::getTime() const
 bool nsfw::Window::getKey(unsigned k) const
 {
 	//TODO();
-	if(glfwGetKey(window, k) == GLFW_PRESS){
+	if (glfwGetKey(window, k) == GLFW_PRESS) {
 		return true;
 	}
-	else{
+	else {
 		return false;
 	}
-	
+
 }
 
 bool nsfw::Window::getShouldClose() const

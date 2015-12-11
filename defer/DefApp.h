@@ -35,6 +35,8 @@ class DeferredApplication : public nsfw::Application
 	SPass	*m_shadowPass;
 	SCPass	*m_shadowCompositePass;
 
+	bool shadowPass = true;
+
 public:
 	void onInit();
 	void onStep();

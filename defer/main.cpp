@@ -146,8 +146,14 @@ void DeferredApplication::onPlay()
 
 void DeferredApplication::onStep()
 {
-	float time = nsfw::Window::instance().getTime();
-	float deltaTime = nsfw::Window::instance().getDeltaTime();
+	auto &w = nsfw::Window::instance();
+
+	float time = w.getTime();
+	float deltaTime = w.getDeltaTime();
+
+	if (w.getKey(GLFW_KEY_F1)) {
+		shadowPass = !shadowPass;
+	}
 
 	m_soulspear->transform = glm::rotate(time * 100, glm::vec3(0.f, 1.f, 0.f));
 	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
@@ -170,13 +176,17 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_particleEmitter);
 	m_geometryPass->post();
 
+	
 	//Shadow Pass
 	m_shadowPass->prep();
+	if (shadowPass) {
 	m_shadowPass->draw(*m_light, *m_soulspear);
 	m_shadowPass->draw(*m_light, *m_soulspear2);
 	//m_shadowPass->draw(*m_light, *m_cube);
 	m_shadowPass->draw(*m_light, *m_floor);
+	}
 	m_shadowPass->post();
+	
 
 	//Light Pass
 	m_directionalLightPass->prep();

@@ -21,7 +21,7 @@ public:
 		//
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(*shader);
+		
 
 	}
 	void post(){
@@ -39,7 +39,7 @@ public:
 
 	void draw(const Camera &c, const Geometry &g)	
 	{
-
+		glUseProgram(*shader);
 		setUniform("Projection",	nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
 		setUniform("View",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
 		setUniform("Model",			nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
